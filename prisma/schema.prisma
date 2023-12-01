@@ -7,71 +7,50 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Status {
-  ACTIVE
-  REMOVED
-}
-
 enum UserStatus {
   ACTIVE
   INACTIVE
 }
 
-enum Role {
+enum Roles {
   USER
   ADMIN
   SUPER_ADMIN
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  someJson  Json?    @db.Json
-  status    Status   @default(ACTIVE)
-  published Boolean  @default(false)
-  publisher    Publisher     @relation(fields: [publisherId], references: [id])
-  publisherId  Int
-}
-
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  publisher   Publisher    @relation(fields: [publisherId], references: [id])
-  publisherId Int     @unique
-}
-
-model Publisher {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
-  profile Profile?
-}
-
 model User {
-  id      Int      @id @default(autoincrement())
-  unionId String?  @unique
-  openId  String?  @unique
-  nick  String?
-  avatarUrl  String?
-  mobile  String?
-  stateCode String?
-  username  String  @unique @db.VarChar(255)
-  password  String
-  status    UserStatus   @default(ACTIVE)
-  roles     Roles[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  username      String  @unique @db.VarChar(255)
+  password      String
+  status        UserStatus   @default(ACTIVE)
+  unionId       String?  @unique
+  openId        String?  @unique
+  nick          String?
+  avatarUrl     String?
+  mobile        String?
+  stateCode     String?
+  roles         UserRoles[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
-model Roles {
-  id      Int      @id @default(autoincrement())
-  name    Role   @unique  @default(USER)
-  permissions    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model UserRoles {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  roleId        Int
+  user          User     @relation(fields: [userId], references: [id])
+  role          Role     @relation(fields: [roleId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  @@unique([userId, roleId])
+}
+
+model Role {
+  id            Int      @id @default(autoincrement())
+  name          Roles   @unique  @default(USER)
+  permissions   String?
+  users         UserRoles[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 

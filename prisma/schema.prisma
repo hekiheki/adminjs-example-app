@@ -12,6 +12,17 @@ enum Status {
   REMOVED
 }
 
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
 model Post {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -39,3 +50,28 @@ model Publisher {
   posts   Post[]
   profile Profile?
 }
+
+model User {
+  id      Int      @id @default(autoincrement())
+  unionId String?  @unique
+  openId  String?  @unique
+  nick  String?
+  avatarUrl  String?
+  mobile  String?
+  stateCode String?
+  username  String  @unique @db.VarChar(255)
+  password  String
+  status    UserStatus   @default(ACTIVE)
+  roles     Roles[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Roles {
+  id      Int      @id @default(autoincrement())
+  name    Role   @unique  @default(USER)
+  permissions    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

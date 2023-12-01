@@ -14,7 +14,7 @@ const TopBar: FC = () => {
       <Text ml="xl" mr="auto">
         {versions.admin}
       </Text>
-      <Button color="text" as="a" href={SLACK_URL} target="_blank">
+      {/* <Button color="text" as="a" href={SLACK_URL} target="_blank">
         <Icon icon="Slack" />
         Slack
       </Button>
@@ -25,7 +25,7 @@ const TopBar: FC = () => {
       <Button color="text" as="a" href={DOCUMENTATION_URL} target="_blank">
         <Icon icon="BookOpen" />
         Documentation
-      </Button>
+      </Button> */}
     </Box>
   );
 };

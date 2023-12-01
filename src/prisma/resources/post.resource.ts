@@ -1,6 +1,6 @@
-import { menu } from '../../../admin/index.js';
-import { useEnvironmentVariableToDisableActions } from '../../../admin/features/useEnvironmentVariableToDisableActions.js';
-import { ResourceFunction } from '../../../admin/types/index.js';
+import { menu } from '../../admin/index.js';
+import { useEnvironmentVariableToDisableActions } from '../../admin/features/useEnvironmentVariableToDisableActions.js';
+import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
 
 export const CreatePostResource: ResourceFunction<{

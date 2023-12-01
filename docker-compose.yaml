@@ -1,26 +1,6 @@
 version: '3.7'
 
 services:
-  mongo_db:
-    container_name: adminjs-example-mongo
-    image: mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_db_example_app:/data/db
-
-  postgres_db:
-    container_name: adminjs-example-postgres
-    image: postgres
-    environment:
-      - POSTGRES_DB=adminjs
-      - POSTGRES_USER=adminjs
-      - POSTGRES_PASSWORD=adminjs
-    ports:
-      - "5435:5432"
-    volumes:
-      - postgres_db_example_app:/var/lib/postgresql/data
-
   mysql_db:
     container_name: adminjs-example-mysql
     image: mysql
@@ -32,9 +12,7 @@ services:
     ports:
       - "3308:3306"
     volumes:
-      - mysql_db_example_app:/var/lib/mysql
+      - /mysql_db_example_app:/var/lib/mysql
 
 volumes:
-  mongo_db_example_app:
-  postgres_db_example_app:
   mysql_db_example_app:

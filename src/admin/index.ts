@@ -4,16 +4,17 @@ import { dark, light, noSidebar } from '@adminjs/themes';
 import AdminJS, { AdminJSOptions, ResourceOptions } from 'adminjs';
 import { CreateUserResource, CreateRoleResource, CreateUserRolesResource } from '../prisma/resources/index.js';
 import './components.bundler.js';
-import { componentLoader } from './components.bundler.js';
+import { componentLoader, CUSTOM_PAGE } from './components.bundler.js';
 import { locale } from './locale/index.js';
-import pages from './pages/index.js';
 import { customTheme } from '../themes/index.js';
 
 AdminJS.registerAdapter({ Database: PrismaDatabase, Resource: PrismaResource });
 
 export const menu: Record<string, ResourceOptions['navigation']> = {
-  user: { name: 'User', icon: 'User' },
-  roles: { name: 'Roles', icon: 'List' },
+  manager: {
+    name: '管理用户',
+    icon: 'User',
+  },
 };
 
 export const generateAdminJSConfig: () => AdminJSOptions = () => ({
@@ -25,21 +26,17 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
     scripts: process.env.NODE_ENV === 'production' ? ['/gtm.js'] : [],
   },
   branding: {
-    companyName: 'AdminJS demo page',
+    companyName: 'Demo',
     favicon: '/favicon.ico',
     theme: {
       colors: { primary100: '#4D70EB' },
     },
   },
-  defaultTheme: 'light',
-  availableThemes: [light, dark, noSidebar, customTheme],
-  componentLoader,
-  pages,
-  env: {
-    STORYBOOK_URL: process.env.STORYBOOK_URL,
-    GITHUB_URL: process.env.GITHUB_URL,
-    SLACK_URL: process.env.SLACK_URL,
-    DOCUMENTATION_URL: process.env.DOCUMENTATION_URL,
+  dashboard: {
+    component: CUSTOM_PAGE,
   },
+  defaultTheme: 'light',
+  availableThemes: [light, dark, customTheme],
+  componentLoader,
   resources: [CreateUserResource(), CreateRoleResource(), CreateUserRolesResource()],
 });

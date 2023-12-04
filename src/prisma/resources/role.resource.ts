@@ -13,7 +13,7 @@ export const CreateRoleResource: ResourceFunction<{
   },
   features: [useEnvironmentVariableToDisableActions()],
   options: {
-    navigation: menu.roles,
+    navigation: menu.manager,
     properties: {
       id: {
         isVisible: { list: true, show: false, edit: false, filter: false },

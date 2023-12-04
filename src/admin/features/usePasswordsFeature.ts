@@ -7,7 +7,7 @@ export const usePasswordsFeature = () => {
     componentLoader,
     properties: {
       encryptedPassword: 'password',
-      password: 'Password',
+      password: 'newPassword',
     },
     hash: argon2.hash,
   });

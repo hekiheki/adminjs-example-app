@@ -1,8 +1,8 @@
 import { menu } from '../../admin/index.js';
-import { useEnvironmentVariableToDisableActions } from '../../admin/features/useEnvironmentVariableToDisableActions.js';
-import { usePasswordsFeature } from '../../admin/features/usePasswordsFeature.js';
+import { manyToManyReferencesAfterHook } from '../../admin/hooks/index.js';
+import { useEnvironmentVariableToDisableActions, usePasswordsFeature } from '../../admin/features/index.js';
+import { MANY_TO_MANY_EDIT, MANY_TO_MANY_LIST, MANY_TO_MANY_SHOW } from '../../admin/components.bundler.js';
 import { ResourceFunction } from '../../admin/types/index.js';
-import { ROLES_LIST } from '../../admin/components.bundler.js';
 import { client, dmmf } from '../config.js';
 
 export const CreateUserResource: ResourceFunction<{
@@ -15,25 +15,44 @@ export const CreateUserResource: ResourceFunction<{
   },
   features: [useEnvironmentVariableToDisableActions(), usePasswordsFeature()],
   options: {
-    navigation: menu.user,
+    navigation: menu.manager,
     properties: {
       id: {
         isVisible: { list: true, show: false, edit: false, filter: false },
       },
       username: {
-        isVisible: { list: true, show: true, edit: true, filter: true },
+        isVisible: true,
         isTitle: true,
       },
       password: {
-        isVisible: { list: false, show: false, edit: false, filter: false },
+        isVisible: false,
       },
       status: {
-        isVisible: { list: true, show: true, edit: true, filter: true },
+        isVisible: true,
+        custom: {
+          defaultValue: 'ACTIVE',
+        },
       },
       roles: {
-        isVisible: { list: true, show: true, edit: true, filter: true },
+        name: 'Roles',
+        reference: 'Role',
+        isVisible: {
+          list: true,
+          show: true,
+          filter: false,
+          edit: true,
+        },
+        isArray: true,
         components: {
-          edit: ROLES_LIST,
+          show: MANY_TO_MANY_SHOW,
+          edit: MANY_TO_MANY_EDIT,
+          list: MANY_TO_MANY_LIST,
+        },
+        custom: {
+          includeId: 'role',
+          reference: 'UserRoles',
+          resourceId: 'userId',
+          referenceId: 'roleId',
         },
       },
       unionId: {
@@ -52,21 +71,15 @@ export const CreateUserResource: ResourceFunction<{
         isVisible: { list: true, show: true, edit: false, filter: false },
       },
       stateCode: {
-        isVisible: { list: false, show: false, edit: false, filter: false },
+        isVisible: false,
       },
     },
     actions: {
       edit: {
-        isAccessible: true,
-        isVisible: true,
-        before: async (request) => {
-          console.log('request', request);
-          return request;
-        },
-        after: async (response) => {
-          console.log('response', response);
-          return response;
-        },
+        after: [manyToManyReferencesAfterHook],
+      },
+      show: {
+        after: [manyToManyReferencesAfterHook],
       },
     },
   },

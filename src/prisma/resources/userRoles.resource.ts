@@ -13,6 +13,19 @@ export const CreateUserRolesResource: ResourceFunction<{
   },
   features: [useEnvironmentVariableToDisableActions()],
   options: {
-    navigation: menu.user,
+    navigation: menu.manager,
+    // properties: {
+    //   id: {
+    //     isVisible: { list: true, show: false, edit: false, filter: false },
+    //   },
+    //   userId: {
+    //     isVisible: true,
+    //     reference: 'User',
+    //   },
+    //   roleId: {
+    //     isVisible: true,
+    //     reference: 'Role',
+    //   },
+    // },
   },
 });

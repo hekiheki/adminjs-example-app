@@ -1,35 +1,12 @@
-import { Locale, locales as AdminJSLocales } from 'adminjs';
+import { Locale } from 'adminjs';
+import zhCNLocale from './translation.json' assert { type: 'json' };
 
-import de from './de/index.js';
-import en from './en/index.js';
-
-const localeKey = process.env.LOCALE || 'en';
-const customLanguage = 'mk';
+const localeKey = process.env.LOCALE || 'zh-CN';
 
 export const locale: Locale = {
   language: localeKey,
-  availableLanguages: [...Object.keys(AdminJSLocales), customLanguage].sort(),
-  localeDetection: true,
-  withBackend: true,
+  availableLanguages: ['zh-CN'],
   translations: {
-    de,
-    en,
-    [customLanguage]: {
-      components: {
-        LanguageSelector: {
-          availableLanguages: {
-            de: 'германски',
-            en: 'Англиски',
-            es: 'шпански',
-            it: 'италијански',
-            pl: 'полски',
-            mk: 'македонски',
-            'pt-BR': 'португалски (Бразил)',
-            ua: 'украински',
-            'zh-CN': 'кинески',
-          },
-        },
-      },
-    },
+    'zh-CN': zhCNLocale,
   },
 };

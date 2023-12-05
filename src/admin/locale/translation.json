@@ -47,7 +47,7 @@
       "welcomeHeader": "欢迎",
       "welcomeMessage": "到 AdminJS – 世界领先的开源自动生成管理面板, 可用于你的 Node.js 应用程序, 以将所有数据汇于一处管理",
       "properties": {
-        "email": "电子邮件",
+        "username": "用户名",
         "password": "密码"
       },
       "loginButton": "登录"

@@ -33,6 +33,7 @@ export const manyToManyReferencesAfterHook = async (
   const client = context.resource.client;
   const manyReferences = getManyReferences(properties);
   const recordId = response.record?.params?.id;
+  const payload = flat.unflatten(request.payload);
   if (method === 'get' && recordId) {
     const referenceResults = await fetchManyReferences(manyReferences, recordId, client);
     manyReferences.forEach(([name], index) => {
@@ -42,18 +43,21 @@ export const manyToManyReferencesAfterHook = async (
   if (method === 'post' && context.record.isValid() && recordId) {
     await Promise.all(
       manyReferences.map(async ([name, { custom }]: [string, any]) => {
-        const results = flat.unflatten(request.payload)[name].map((item) => Number(item.id));
-        await client[custom.reference].deleteMany({
-          where: {
-            [custom.resourceId]: recordId,
-          },
-        });
-        await client[custom.reference].createMany({
-          data: results.map((val) => ({
-            [custom.resourceId]: recordId,
-            [custom.referenceId]: val,
-          })),
-        });
+        if (!payload[name]) return;
+        const results = payload[name].map((item) => Number(item.id));
+        if (results && results.length) {
+          await client[custom.reference].deleteMany({
+            where: {
+              [custom.resourceId]: recordId,
+            },
+          });
+          await client[custom.reference].createMany({
+            data: results.map((val) => ({
+              [custom.resourceId]: recordId,
+              [custom.referenceId]: val,
+            })),
+          });
+        }
       }),
     );
   }

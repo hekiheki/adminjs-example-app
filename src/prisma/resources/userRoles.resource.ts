@@ -21,10 +21,12 @@ export const CreateUserRolesResource: ResourceFunction<{
       user: {
         isVisible: true,
         isTitle: true,
+        position: 1,
       },
       role: {
         isVisible: true,
         isTitle: true,
+        position: 2,
       },
     },
   },

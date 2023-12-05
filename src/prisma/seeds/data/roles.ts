@@ -1,8 +1,3 @@
-import { faker } from '@faker-js/faker';
-
-const roles = (count: number) =>
-  Array.from({ length: count }, () => ({
-    name: faker.helpers.arrayElement(['USER', 'ADMIN', 'SUPER_ADMIN']) as any,
-  }));
+const roles = () => [{ name: 'USER' }, { name: 'ADMIN' }, { name: 'SUPER_ADMIN' }];
 
 export default roles;

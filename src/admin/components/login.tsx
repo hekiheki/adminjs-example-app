@@ -46,7 +46,7 @@ const IllustrationsWrapper = styled(Box)<BoxProps>`
 `;
 
 export type LoginProps = {
-  credentials: Pick<AuthUser, 'email' | 'password'>;
+  credentials: Pick<AuthUser, 'username' | 'password'>;
   action: string;
   errorMessage?: string;
   children?: any;
@@ -57,7 +57,7 @@ export const Login: React.FC<LoginProps> = (props) => {
   const { translateComponent, translateMessage } = useTranslation();
   const [defaultUser] = AuthUsers;
   const branding = useSelector((state: ReduxState) => state.branding);
-  const message = `Email: ${defaultUser.email}\nPassword: ${defaultUser.password}`;
+  // const message = `Username: ${defaultUser.username}\nPassword: ${defaultUser.password}`;
 
   return (
     <React.Fragment>
@@ -92,7 +92,6 @@ export const Login: React.FC<LoginProps> = (props) => {
             <H5 marginBottom="xxl">
               {branding.logo ? <StyledLogo src={branding.logo} alt={branding.companyName} /> : branding.companyName}
             </H5>
-            <MessageBox my="lg" message={message} variant="info" style={{ whiteSpace: 'pre-wrap' }} />
             {errorMessage && (
               <MessageBox
                 my="lg"
@@ -101,11 +100,11 @@ export const Login: React.FC<LoginProps> = (props) => {
               />
             )}
             <FormGroup>
-              <Label required>{translateComponent('Login.properties.email')}</Label>
+              <Label required>{translateComponent('Login.properties.username')}</Label>
               <Input
                 name="email"
-                placeholder={translateComponent('Login.properties.email')}
-                defaultValue={defaultUser.email}
+                placeholder={translateComponent('Login.properties.username')}
+                defaultValue={defaultUser.username}
               />
             </FormGroup>
             <FormGroup>

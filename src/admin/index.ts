@@ -30,7 +30,7 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
     scripts: process.env.NODE_ENV === 'production' ? ['/gtm.js'] : [],
   },
   branding: {
-    companyName: 'Demo',
+    companyName: process.env.COMPANY_NAME,
     favicon: '/favicon.ico',
     theme: {
       colors: { primary100: '#4D70EB' },

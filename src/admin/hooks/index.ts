@@ -1,36 +1,45 @@
-import { RecordActionResponse, ActionRequest, ActionContext, ResourceOptions, flat } from 'adminjs';
+import { RecordActionResponse, ActionRequest, flat } from 'adminjs';
+
+const getManyReferences = (properties: any) => {
+  return Object.entries(properties).filter(([name, { type, custom }]: any[]) => {
+    return type === 'reference' && custom && custom.reference && custom.resourceId && custom.includeId;
+  });
+};
+
+const fetchManyReferences = async (properties: any, recordId: number, client: any) => {
+  const results = await Promise.all(
+    properties.map(async ([name, { custom }]: [string, any]) => {
+      const records = await client[custom.reference].findMany({
+        where: {
+          [custom.resourceId]: recordId,
+        },
+        include: {
+          [custom.includeId]: true,
+        },
+      });
+      return records.length ? records.map((r) => r[custom.includeId]) : [];
+    }),
+  );
+  return results;
+};
 
 export const manyToManyReferencesAfterHook = async (
   response: RecordActionResponse,
   request: ActionRequest,
-  context: ActionContext,
+  context: any,
 ) => {
-  const recordId = response.record.params.id;
   const { method } = request;
   const { properties } = context.resource.decorate().toJSON(context.currentAdmin);
   const client = context.resource.client;
-  const manyReferences = Object.entries(properties).filter(([name, { type, custom }]: [string, ResourceOptions]) => {
-    return type === 'reference' && custom && custom.reference && custom.resourceId && custom.includeId;
-  });
-  if (method === 'get' && context.action.name !== 'new') {
-    const results = await Promise.all(
-      manyReferences.map(async ([name, { custom }]: [string, any]) => {
-        const userRoles = await client[custom.reference].findMany({
-          where: {
-            [custom.resourceId]: recordId,
-          },
-          include: {
-            [custom.includeId]: true,
-          },
-        });
-        return userRoles.length ? userRoles.map((r) => r[custom.includeId]) : [];
-      }),
-    );
+  const manyReferences = getManyReferences(properties);
+  const recordId = response.record?.params?.id;
+  if (method === 'get' && recordId) {
+    const referenceResults = await fetchManyReferences(manyReferences, recordId, client);
     manyReferences.forEach(([name], index) => {
-      response.record.params[name] = results[index];
+      response.record.params[name] = referenceResults[index];
     });
   }
-  if (method === 'post' && context.record.isValid()) {
+  if (method === 'post' && context.record.isValid() && recordId) {
     await Promise.all(
       manyReferences.map(async ([name, { custom }]: [string, any]) => {
         const results = flat.unflatten(request.payload)[name].map((item) => Number(item.id));

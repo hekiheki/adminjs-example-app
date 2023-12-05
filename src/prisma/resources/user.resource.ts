@@ -19,25 +19,26 @@ export const CreateUserResource: ResourceFunction<{
     properties: {
       id: {
         isVisible: { list: true, show: false, edit: false, filter: false },
+        isId: true,
+        position: 1,
       },
       username: {
         isVisible: true,
         isTitle: true,
+        position: 2,
       },
       password: {
         isVisible: false,
       },
       status: {
         isVisible: true,
-        custom: {
-          defaultValue: 'ACTIVE',
-        },
+        isTitle: true,
+        position: 6,
       },
       roles: {
-        name: 'Roles',
         reference: 'Role',
         isVisible: {
-          list: true,
+          list: false,
           show: true,
           filter: false,
           edit: true,
@@ -46,7 +47,6 @@ export const CreateUserResource: ResourceFunction<{
         components: {
           show: MANY_TO_MANY_SHOW,
           edit: MANY_TO_MANY_EDIT,
-          list: MANY_TO_MANY_LIST,
         },
         custom: {
           includeId: 'role',
@@ -56,25 +56,32 @@ export const CreateUserResource: ResourceFunction<{
         },
       },
       unionId: {
-        isVisible: { list: true, show: true, edit: false, filter: false },
+        isVisible: { list: false, show: true, edit: false, filter: false },
       },
       openId: {
-        isVisible: { list: true, show: true, edit: false, filter: false },
+        isVisible: { list: false, show: true, edit: false, filter: false },
       },
       nick: {
         isVisible: { list: true, show: true, edit: false, filter: false },
+        isTitle: true,
+        position: 4,
       },
       avatarUrl: {
-        isVisible: { list: true, show: true, edit: false, filter: false },
+        isVisible: { list: false, show: true, edit: false, filter: false },
       },
       mobile: {
         isVisible: { list: true, show: true, edit: false, filter: false },
+        isTitle: true,
+        position: 5,
       },
       stateCode: {
         isVisible: false,
       },
     },
     actions: {
+      new: {
+        after: [manyToManyReferencesAfterHook],
+      },
       edit: {
         after: [manyToManyReferencesAfterHook],
       },

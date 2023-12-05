@@ -57,21 +57,47 @@
     "length": "长度",
     "from": "从",
     "to": "到",
-    "username": "用户名",
-    "password": "密码",
-    "passwordConfirmation": "密码确认",
-    "encryptedPassword": "加密密码",
-    "nick": "姓名",
-    "role": "角色",
+    "id": "ID",
     "createdAt": "创建于",
     "updatedAt": "更新于",
-    "passwordResetToken": "密码重置令牌",
-    "mobile": "电话号码",
-    "avatarUrl": "头像",
-    "id": "ID"
+    "roles": "用户角色"
   },
   "resources": {
-    "User": "用户"
+    "User": {
+      "labels": {
+        "User": "用户"
+      },
+      "properties": {
+        "username": "用户名",
+        "password": "密码",
+        "passwordConfirmation": "密码确认",
+        "encryptedPassword": "加密密码",
+        "nick": "姓名",
+        "roles": "用户角色",
+        "passwordResetToken": "密码重置令牌",
+        "mobile": "电话号码",
+        "avatarUrl": "头像",
+        "status": "用户状态"
+      }
+    },
+    "Role": {
+      "labels": {
+        "Role": "角色"
+      },
+      "properties": {
+        "name": "名称",
+        "users": "用户"
+      }
+    },
+    "UserRoles": {
+      "labels": {
+        "Role": "用户角色"
+      },
+      "properties": {
+        "user": "用户",
+        "role": "角色"
+      }
+    }
   },
   "messages": {
     "successfullyBulkDeleted": "成功移除了 {{count}} 条记录",

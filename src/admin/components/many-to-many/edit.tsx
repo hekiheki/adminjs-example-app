@@ -1,7 +1,6 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState } from 'react';
 import { FormGroup, FormMessage, Label, SelectAsync } from '@adminjs/design-system';
-import { ApiClient, EditPropertyPropsInArray, RecordJSON, SelectRecord } from 'adminjs';
-import { unflatten } from 'flat';
+import { ApiClient, EditPropertyPropsInArray, RecordJSON, SelectRecord, flat, useTranslation } from 'adminjs';
 
 type CombinedProps = EditPropertyPropsInArray;
 type SelectRecordEnhanced = SelectRecord;
@@ -15,6 +14,8 @@ const EditManyToManyInput: FC<CombinedProps> = (props) => {
   if (!resourceId) {
     throw new Error(`Cannot reference resource in property '${property.path}'`);
   }
+
+  const { translateProperty } = useTranslation();
 
   const handleChange = (selected: any[]): void => {
     setSelectedOptions(selected);
@@ -41,41 +42,20 @@ const EditManyToManyInput: FC<CombinedProps> = (props) => {
   };
   const error = record?.errors[property.path];
 
-  const selectedValues = unflatten(record.params)[property.path] || [];
+  const selectedValues = flat.unflatten(record.params)[property.path] || [];
 
-  const selectedId = record?.params[property.path] as string | undefined;
-  const [loadedRecord, setLoadedRecord] = useState<RecordJSON | undefined>();
-  const [loadingRecord, setLoadingRecord] = useState(0);
-  const selectedValue = record?.populated[property.path] ?? loadedRecord;
+  const [loadingRecord] = useState(0);
   const selectedValuesToOptions = selectedValues.map((selectedValue) => ({
     value: Number(selectedValue.id),
     label: selectedValue.name,
   }));
   const [selectedOptions, setSelectedOptions] = useState(selectedValuesToOptions);
 
-  useEffect(() => {
-    if (!selectedValue && selectedId) {
-      setLoadingRecord((c) => c + 1);
-      api
-        .recordAction({
-          actionName: 'show',
-          resourceId,
-          recordId: selectedId,
-        })
-        .then(({ data }: any) => {
-          setLoadedRecord(data.record);
-        })
-        .finally(() => {
-          setLoadingRecord((c) => c - 1);
-        });
-    }
-  }, [selectedValue, selectedId, resourceId]);
-
   return (
     <FormGroup error={Boolean(error)}>
-      <Label>{property.label}</Label>
+      <Label>{translateProperty(property.label, property.resourceId)}</Label>
       <SelectAsync
-        isMulti
+        isMulti={property.isArray}
         cacheOptions
         value={selectedOptions}
         defaultOptions

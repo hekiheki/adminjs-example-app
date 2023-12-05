@@ -1,6 +1,6 @@
 // Adapters
 import { Database as PrismaDatabase, Resource as PrismaResource } from '@adminjs/prisma';
-import { dark, light, noSidebar } from '@adminjs/themes';
+import { dark, light } from '@adminjs/themes';
 import AdminJS, { AdminJSOptions, ResourceOptions } from 'adminjs';
 import { CreateUserResource, CreateRoleResource, CreateUserRolesResource } from '../prisma/resources/index.js';
 import './components.bundler.js';
@@ -15,10 +15,14 @@ export const menu: Record<string, ResourceOptions['navigation']> = {
     name: '管理用户',
     icon: 'User',
   },
+  project: {
+    name: '项目列表',
+    icon: 'List',
+  },
 };
 
 export const generateAdminJSConfig: () => AdminJSOptions = () => ({
-  version: { admin: true, app: '2.0.0' },
+  version: { admin: false, app: '2.0.0' },
   rootPath: '/admin',
   locale,
   assets: {

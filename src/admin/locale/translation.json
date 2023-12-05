@@ -91,7 +91,7 @@
     },
     "UserRoles": {
       "labels": {
-        "Role": "用户角色"
+        "UserRoles": "用户角色"
       },
       "properties": {
         "user": "用户",

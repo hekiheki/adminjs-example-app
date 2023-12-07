@@ -50,7 +50,8 @@
         "username": "用户名",
         "password": "密码"
       },
-      "loginButton": "登录"
+      "loginButton": "登录",
+      "ssoLogin": "或使用单点登录"
     }
   },
   "properties": {

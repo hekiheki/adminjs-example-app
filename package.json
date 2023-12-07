@@ -26,7 +26,7 @@
     "schema": "prisma/schema.prisma"
   },
   "dependencies": {
-    "@adminjs/express": "^6.0.0",
+    "@adminjs/express": "^6.1.0",
     "@adminjs/passwords": "^4.0.0",
     "@adminjs/prisma": "^4.0.0",
     "@adminjs/themes": "^1.0.0",
@@ -34,7 +34,8 @@
     "@prisma/client": "^4.11.0",
     "@quixo3/prisma-session-store": "^3.1.13",
     "@types/express": "^4.17.21",
-    "adminjs": "^7.0.9",
+    "@types/node-fetch": "^2.6.9",
+    "adminjs": "^7.5.0",
     "ajv-formats": "^2.1.1",
     "argon2": "^0.30.3",
     "class-transformer": "^0.5.1",
@@ -48,6 +49,7 @@
     "express-session": "^1.17.3",
     "i18next": "^22.4.13",
     "knex": "^2.4.2",
+    "node-fetch": "^3.3.2",
     "nodemon": "^2.0.21",
     "prisma": "^4.11.0",
     "reflect-metadata": "^0.1.13",

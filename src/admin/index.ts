@@ -23,7 +23,8 @@ export const menu: Record<string, ResourceOptions['navigation']> = {
 
 export const generateAdminJSConfig: () => AdminJSOptions = () => ({
   version: { admin: false, app: '2.0.0' },
-  rootPath: '/admin',
+  rootPath: '/',
+  loginPath: '/login',
   locale,
   assets: {
     styles: ['/custom.css'],

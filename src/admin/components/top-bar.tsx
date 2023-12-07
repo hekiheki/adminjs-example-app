@@ -4,12 +4,15 @@ import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 
 const TopBar: FC = () => {
-  const versions = useSelector((state: ReduxState) => state.versions);
+  const session = useSelector((state: ReduxState) => state.session);
+  const { username, nick } = session;
+
+  if (!session) return null;
 
   return (
     <Box flex flexGrow={1} justifyContent="end" alignItems="center">
       <Text ml="xl" mr="auto">
-        {versions.admin}
+        {nick || username}
       </Text>
     </Box>
   );

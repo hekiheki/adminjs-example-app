@@ -4,19 +4,25 @@ import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import argon2 from 'argon2';
 import { Router } from 'express';
 import { client } from '../prisma/config.js';
+import { componentLoader } from './components.bundler.js';
+import { DefaultAuthProvider } from './providers/auth-provider.js';
 
-export const authenticate = async (username: string, password: string) => {
+export const authenticate = async ({ username, password }) => {
   const user = await client.user.findFirst({
     where: {
       username,
     },
   });
-
   if (user && (await argon2.verify(user.password, password))) {
     return Promise.resolve(user);
   }
   return null;
 };
+
+export const authProvider = new DefaultAuthProvider({
+  componentLoader,
+  authenticate,
+});
 
 export const expressAuthenticatedRouter = (adminJs: AdminJS, router: Router | null = null) => {
   const sessionStore = new PrismaSessionStore(client, {
@@ -28,9 +34,9 @@ export const expressAuthenticatedRouter = (adminJs: AdminJS, router: Router | nu
   return AdminJSExpress.buildAuthenticatedRouter(
     adminJs,
     {
-      authenticate,
       cookieName: process.env.NAME,
       cookiePassword: process.env.SESSION_SECRET,
+      provider: authProvider,
     },
     router,
     {

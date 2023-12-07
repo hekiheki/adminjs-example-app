@@ -15,6 +15,7 @@ import {
   MessageBox,
   MadeWithLove,
   themeGet,
+  Link,
 } from '@adminjs/design-system';
 import { styled } from '@adminjs/design-system/styled-components';
 import { ReduxState, useTranslation } from 'adminjs';
@@ -58,7 +59,6 @@ export const Login: React.FC<LoginProps> = (props) => {
   const [defaultUser] = AuthUsers;
   const branding = useSelector((state: ReduxState) => state.branding);
   // const message = `Username: ${defaultUser.username}\nPassword: ${defaultUser.password}`;
-
   return (
     <React.Fragment>
       <Wrapper flex variant="grey">
@@ -99,10 +99,13 @@ export const Login: React.FC<LoginProps> = (props) => {
                 variant="danger"
               />
             )}
+            <Link href="/sso/login" ml="md">
+              {translateComponent('Login.ssoLogin')}
+            </Link>
             <FormGroup>
               <Label required>{translateComponent('Login.properties.username')}</Label>
               <Input
-                name="email"
+                name="username"
                 placeholder={translateComponent('Login.properties.username')}
                 defaultValue={defaultUser.username}
               />

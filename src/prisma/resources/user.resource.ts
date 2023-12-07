@@ -1,5 +1,9 @@
 import { menu } from '../../admin/index.js';
-import { manyToManyReferencesAfterHook } from '../../admin/hooks/index.js';
+import {
+  manyToManyReferencesAfterHook,
+  getManyToManyReferencesValuesAfterHook,
+  postManyToManyReferencesValuesAfterHook,
+} from '../../admin/hooks/index.js';
 import { useEnvironmentVariableToDisableActions, usePasswordsFeature } from '../../admin/features/index.js';
 import { MANY_TO_MANY_EDIT, MANY_TO_MANY_LIST, MANY_TO_MANY_SHOW } from '../../admin/components.bundler.js';
 import { ResourceFunction } from '../../admin/types/index.js';
@@ -31,9 +35,9 @@ export const CreateUserResource: ResourceFunction<{
         isVisible: false,
       },
       status: {
-        isVisible: true,
-        isTitle: true,
-        position: 6,
+        isVisible: false,
+        // isTitle: true,
+        // position: 6,
       },
       roles: {
         reference: 'Role',
@@ -43,7 +47,7 @@ export const CreateUserResource: ResourceFunction<{
           filter: false,
           edit: true,
         },
-        isArray: true,
+        isArray: false,
         components: {
           show: MANY_TO_MANY_SHOW,
           edit: MANY_TO_MANY_EDIT,
@@ -53,6 +57,7 @@ export const CreateUserResource: ResourceFunction<{
           reference: 'UserRoles',
           resourceId: 'userId',
           referenceId: 'roleId',
+          default: 'USER',
         },
       },
       unionId: {
@@ -80,13 +85,13 @@ export const CreateUserResource: ResourceFunction<{
     },
     actions: {
       new: {
-        after: [manyToManyReferencesAfterHook],
+        after: [postManyToManyReferencesValuesAfterHook],
       },
       edit: {
-        after: [manyToManyReferencesAfterHook],
+        after: [getManyToManyReferencesValuesAfterHook, postManyToManyReferencesValuesAfterHook],
       },
       show: {
-        after: [manyToManyReferencesAfterHook],
+        after: [getManyToManyReferencesValuesAfterHook],
       },
     },
   },

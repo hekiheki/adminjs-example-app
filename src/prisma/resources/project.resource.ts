@@ -3,7 +3,7 @@ import { ResourceFunction } from '../../admin/types/index.js';
 import { useUploadFeature } from '../../admin/features/index.js';
 import { client, dmmf } from '../config.js';
 
-const photoProperties = (options = {}) =>
+const fileProperties = (options = {}) =>
   ({
     bucket: {
       type: 'string',
@@ -27,8 +27,8 @@ const photoProperties = (options = {}) =>
     },
   } as const);
 
-const photoPropertiesFor = (name, options = {}) => {
-  const properties = photoProperties(options);
+const filePropertiesFor = (name, options = {}) => {
+  const properties = fileProperties(options);
   return Object.keys(properties).reduce(
     (memo, key) => ({
       ...memo,
@@ -38,7 +38,7 @@ const photoPropertiesFor = (name, options = {}) => {
   );
 };
 
-export const CreateFileResource: ResourceFunction<{
+export const CreateProjectResource: ResourceFunction<{
   model: typeof dmmf.modelMap.Project;
   client: typeof client;
 }> = () => ({
@@ -57,9 +57,15 @@ export const CreateFileResource: ResourceFunction<{
       department_2: {
         type: 'mixed',
       },
-      ...photoProperties(),
-      ...photoPropertiesFor('department_1', { isArray: true }),
-      ...photoPropertiesFor('department_2', { isArray: true }),
+      id: {
+        isVisible: false,
+      },
+      comment: {
+        isVisible: false,
+      },
+      ...fileProperties(),
+      ...filePropertiesFor('department_1', { isArray: true }),
+      ...filePropertiesFor('department_2', { isArray: true }),
     },
   },
 });

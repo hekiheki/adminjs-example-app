@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@adminjs/express": "^6.1.0",
+    "@adminjs/logger": "^5.0.1",
     "@adminjs/passwords": "^4.0.0",
     "@adminjs/prisma": "^4.0.0",
     "@adminjs/themes": "^1.0.0",

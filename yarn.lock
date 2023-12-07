@@ -47,6 +47,13 @@
   resolved "https://registry.yarnpkg.com/@adminjs/express/-/express-6.1.0.tgz#9f5035e3d6de0b00b9ea741dde354b97c6faed6f"
   integrity sha512-B3yoWGSp8xeqS/geBIKoSnMx46tbYYrbb/EmKD0SqqlVfxtBwgyoTWa6pkxqRc2T4iTMOl84VkMT0axnooAmZA==
 
+"@adminjs/logger@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@adminjs/logger/-/logger-5.0.1.tgz#dd3cd84f7d0b65546466d3ddcdf175a935254293"
+  integrity sha512-zqtWqTbBMSg3jLK4S9U4CBhmqqCf2DISFq3SIX9jfhpgTA/1CIU0VE2ARTtLZdQsGzCvhqljG74E4L6YXvk7VQ==
+  dependencies:
+    lodash "^4.17.21"
+
 "@adminjs/passwords@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@adminjs/passwords/-/passwords-4.0.0.tgz#e20e7246ff2c249342081ae52b77f2297a756515"

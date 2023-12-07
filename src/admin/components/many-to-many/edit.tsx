@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect, useCallback } from 'react';
 import { FormGroup, FormMessage, Label, SelectAsync } from '@adminjs/design-system';
 import { ApiClient, EditPropertyPropsInArray, RecordJSON, SelectRecord, flat, useTranslation } from 'adminjs';
 
@@ -9,7 +9,7 @@ const api = new ApiClient();
 
 const EditManyToManyInput: FC<CombinedProps> = (props) => {
   const { onChange, property, record } = props;
-  const { reference: resourceId } = property;
+  const { reference: resourceId, custom } = property;
 
   if (!resourceId) {
     throw new Error(`Cannot reference resource in property '${property.path}'`);
@@ -17,29 +17,19 @@ const EditManyToManyInput: FC<CombinedProps> = (props) => {
 
   const { translateProperty } = useTranslation();
 
-  const handleChange = (selected: any[]): void => {
-    setSelectedOptions(selected);
+  const handleChange = (selected: any[] | any): void => {
+    const selectedValuesToOptions = property.isArray ? selected : [selected];
+    setSelectedOptions(selectedValuesToOptions);
     if (selected) {
       onChange(
         property.path,
-        selected.map((option) => ({ id: option.value })),
+        selectedValuesToOptions.map((option) => ({ id: option.value })),
       );
     } else {
       onChange(property.path, null);
     }
   };
 
-  const loadOptions = async (inputValue: string): Promise<SelectRecordEnhanced[]> => {
-    const optionRecords = await api.searchRecords({
-      resourceId,
-      query: inputValue,
-    });
-
-    return optionRecords.map((optionRecord: RecordJSON) => ({
-      value: optionRecord.id,
-      label: optionRecord.title,
-    }));
-  };
   const error = record?.errors[property.path];
 
   const selectedValues = flat.unflatten(record.params)[property.path] || [];
@@ -51,13 +41,38 @@ const EditManyToManyInput: FC<CombinedProps> = (props) => {
   }));
   const [selectedOptions, setSelectedOptions] = useState(selectedValuesToOptions);
 
+  const loadOptions = useCallback(
+    async (inputValue: string): Promise<SelectRecordEnhanced[]> => {
+      const optionRecords = await api.searchRecords({
+        resourceId,
+        query: inputValue,
+      });
+
+      if (!record?.params?.id && custom?.default) {
+        const defaultOption = optionRecords.find((option) => option.title === custom?.default);
+        setSelectedOptions([
+          {
+            value: defaultOption?.id,
+            label: defaultOption?.title,
+          },
+        ]);
+      }
+
+      return optionRecords.map((optionRecord: RecordJSON) => ({
+        value: optionRecord.id,
+        label: optionRecord.title,
+      }));
+    },
+    [custom?.default, record?.params?.id, resourceId],
+  );
+
   return (
     <FormGroup error={Boolean(error)}>
       <Label>{translateProperty(property.label, property.resourceId)}</Label>
       <SelectAsync
         isMulti={property.isArray}
         cacheOptions
-        value={selectedOptions}
+        value={property.isArray ? selectedOptions : selectedOptions.length ? selectedOptions[0] : null}
         defaultOptions
         loadOptions={loadOptions}
         onChange={handleChange}

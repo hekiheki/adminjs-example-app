@@ -8,16 +8,16 @@ import { componentLoader } from './components.bundler.js';
 import { DefaultAuthProvider } from './providers/auth-provider.js';
 
 export const authenticate = async ({ username, password }) => {
-  // const user = await client.user.findFirst({
-  //   where: {
-  //     username,
-  //   },
-  // });
-  // if (user && (await argon2.verify(user.password, password))) {
-  //   return Promise.resolve(user);
-  // }
-  // return null;
-  return Promise.resolve({ username, password });
+  const user = await client.user.findFirst({
+    where: {
+      username,
+    },
+  });
+  if (user && (await argon2.verify(user.password, password))) {
+    return Promise.resolve(user);
+  }
+  return null;
+  // return Promise.resolve({ username, password });
 };
 
 export const authProvider = new DefaultAuthProvider({

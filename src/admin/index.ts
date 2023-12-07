@@ -6,9 +6,10 @@ import {
   CreateUserResource,
   CreateRoleResource,
   CreateUserRolesResource,
-  CreateFileResource,
+  CreateProjectResource,
   CreateProjectTagsResource,
   CreateTagResource,
+  CreateLogResource,
 } from '../prisma/resources/index.js';
 import './components.bundler.js';
 import { componentLoader, CUSTOM_PAGE } from './components.bundler.js';
@@ -54,8 +55,9 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
     CreateUserResource(),
     CreateRoleResource(),
     CreateUserRolesResource(),
-    CreateFileResource(),
+    CreateProjectResource(),
     CreateProjectTagsResource(),
     CreateTagResource(),
+    CreateLogResource(),
   ],
 });

@@ -2,7 +2,14 @@
 import { Database as PrismaDatabase, Resource as PrismaResource } from '@adminjs/prisma';
 import { dark, light } from '@adminjs/themes';
 import AdminJS, { AdminJSOptions, ResourceOptions } from 'adminjs';
-import { CreateUserResource, CreateRoleResource, CreateUserRolesResource } from '../prisma/resources/index.js';
+import {
+  CreateUserResource,
+  CreateRoleResource,
+  CreateUserRolesResource,
+  CreateFileResource,
+  CreateProjectTagsResource,
+  CreateTagResource,
+} from '../prisma/resources/index.js';
 import './components.bundler.js';
 import { componentLoader, CUSTOM_PAGE } from './components.bundler.js';
 import { locale } from './locale/index.js';
@@ -43,5 +50,12 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
   defaultTheme: 'light',
   availableThemes: [light, dark, customTheme],
   componentLoader,
-  resources: [CreateUserResource(), CreateRoleResource(), CreateUserRolesResource()],
+  resources: [
+    CreateUserResource(),
+    CreateRoleResource(),
+    CreateUserRolesResource(),
+    CreateFileResource(),
+    CreateProjectTagsResource(),
+    CreateTagResource(),
+  ],
 });

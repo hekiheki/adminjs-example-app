@@ -2,8 +2,8 @@ import { Router } from 'express';
 import fetch from 'node-fetch';
 import { client } from '../prisma/config.js';
 import argon2 from 'argon2';
-import { SessionData } from '@adminjs/express';
-import { authProvider } from '../admin/router.js';
+import { Roles } from '@prisma/client';
+
 const router = Router();
 
 const requestUserToken = async (code) => {
@@ -68,6 +68,19 @@ const saveUser = async (userInfo) => {
         password: await argon2.hash('123456'),
       },
     });
+
+    const defaultRole = await client.role.findFirst({
+      where: {
+        name: Roles.USER,
+      },
+    });
+
+    await client.userRoles.createMany({
+      data: {
+        roleId: defaultRole.id,
+        userId: newUser.id,
+      },
+    });
     return newUser;
   }
 };
@@ -88,13 +101,14 @@ router.get('/callback-for-dingtalk', async function (req, res, next) {
     const response: any = await requestUserToken(req.query.authCode);
     const data = await getUserInfo(response.accessToken);
     const user = await saveUser(data);
-    (req.session as SessionData).adminUser = user;
-    req.session.save((err) => {
+    const session = req.session as any;
+    session.adminUser = user;
+    session.save((err) => {
       if (err) {
         return next(err);
       }
-      if ((req.session as SessionData).redirectTo) {
-        return res.redirect(302, (req.session as SessionData).redirectTo);
+      if (session.redirectTo) {
+        return res.redirect(302, session.redirectTo);
       } else {
         return res.redirect(302, '/');
       }

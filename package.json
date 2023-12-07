@@ -30,6 +30,7 @@
     "@adminjs/passwords": "^4.0.0",
     "@adminjs/prisma": "^4.0.0",
     "@adminjs/themes": "^1.0.0",
+    "@adminjs/upload": "^4.0.1",
     "@faker-js/faker": "^7.6.0",
     "@prisma/client": "^4.11.0",
     "@quixo3/prisma-session-store": "^3.1.13",

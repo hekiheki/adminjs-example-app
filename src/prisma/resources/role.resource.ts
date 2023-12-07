@@ -22,7 +22,7 @@ export const CreateRoleResource: ResourceFunction<{
         isVisible: { list: true, show: true, edit: true, filter: false },
         isTitle: true,
       },
-      permissions: {
+      comment: {
         isVisible: { list: true, show: true, edit: true, filter: false },
       },
     },

@@ -20,11 +20,11 @@ AdminJS.registerAdapter({ Database: PrismaDatabase, Resource: PrismaResource });
 
 export const menu: Record<string, ResourceOptions['navigation']> = {
   manager: {
-    name: '管理用户',
+    name: 'manager',
     icon: 'User',
   },
   project: {
-    name: '项目列表',
+    name: 'project',
     icon: 'List',
   },
 };

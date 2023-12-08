@@ -25,6 +25,10 @@ const fileProperties = (options = {}) =>
       isVisible: false,
       ...options,
     },
+    comment: {
+      type: 'string',
+      isVisible: false,
+    },
   } as const);
 
 const filePropertiesFor = (name, options = {}) => {
@@ -49,7 +53,6 @@ export const CreateProjectResource: ResourceFunction<{
   features: [useUploadFeature('department_1', true), useUploadFeature('department_2', true)],
   options: {
     navigation: menu.project,
-    // listProperties: ['id', 's3Key', 'bucket', 'path', 'name'],
     properties: {
       department_1: {
         type: 'mixed',
@@ -58,9 +61,6 @@ export const CreateProjectResource: ResourceFunction<{
         type: 'mixed',
       },
       id: {
-        isVisible: false,
-      },
-      comment: {
         isVisible: false,
       },
       ...fileProperties(),

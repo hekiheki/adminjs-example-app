@@ -18,12 +18,14 @@ const EditManyToManyInput: FC<CombinedProps> = (props) => {
   const { translateProperty } = useTranslation();
 
   const handleChange = (selected: any[] | any): void => {
-    const selectedValuesToOptions = property.isArray ? selected : [selected];
-    setSelectedOptions(selectedValuesToOptions);
+    const currentSelected = property.isArray ? selected : [selected];
+    setSelectedOptions(currentSelected);
     if (selected) {
       onChange(
         property.path,
-        selectedValuesToOptions.map((option) => ({ id: option.value })),
+        currentSelected.map((option) => ({
+          id: option.value,
+        })),
       );
     } else {
       onChange(property.path, null);
@@ -37,7 +39,7 @@ const EditManyToManyInput: FC<CombinedProps> = (props) => {
   const [loadingRecord] = useState(0);
   const selectedValuesToOptions = selectedValues.map((selectedValue) => ({
     value: Number(selectedValue.id),
-    label: selectedValue.name,
+    label: translateProperty(selectedValue.name, resourceId),
   }));
   const [selectedOptions, setSelectedOptions] = useState(selectedValuesToOptions);
 
@@ -53,17 +55,17 @@ const EditManyToManyInput: FC<CombinedProps> = (props) => {
         setSelectedOptions([
           {
             value: defaultOption?.id,
-            label: defaultOption?.title,
+            label: translateProperty(defaultOption?.title, resourceId),
           },
         ]);
       }
 
       return optionRecords.map((optionRecord: RecordJSON) => ({
         value: optionRecord.id,
-        label: optionRecord.title,
+        label: translateProperty(optionRecord.title, resourceId),
       }));
     },
-    [custom?.default, record?.params?.id, resourceId],
+    [custom?.default, record?.params?.id, resourceId, translateProperty],
   );
 
   return (

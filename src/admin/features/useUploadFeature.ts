@@ -1,7 +1,7 @@
 import uploadFeature from '@adminjs/upload';
 import { componentLoader } from '../components.bundler.js';
 
-export const useUploadFeature = (name?: string, multiple = false) => {
+export const useUploadFeature = (name?: string, multiple = true) => {
   return uploadFeature({
     componentLoader,
     provider: {

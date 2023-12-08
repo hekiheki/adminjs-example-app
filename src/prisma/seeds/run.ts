@@ -19,7 +19,7 @@ const run = async () => {
 
     await prisma.$transaction(
       defaultUsers.map(({ username }) =>
-        prisma.role.create({
+        prisma.user.create({
           data: {
             username,
             password: hashedPassword,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge } from '@adminjs/design-system';
-import { PropertyJSON } from 'adminjs';
+import { PropertyJSON, useTranslation } from 'adminjs';
 
 interface Props {
   property: PropertyJSON;
@@ -8,10 +8,11 @@ interface Props {
 }
 
 const ReferenceValue: React.FC<Props> = (props) => {
-  const { record } = props;
+  const { record, property } = props;
+  const { translateProperty } = useTranslation();
   return (
     <Badge size="sm" rounded>
-      {record.name}
+      {translateProperty(record.name, property.resourceId)}
     </Badge>
   );
 };

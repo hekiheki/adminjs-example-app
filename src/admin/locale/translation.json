@@ -9,6 +9,9 @@
   },
   "buttons": {
     "save": "保存",
+    "confirm": "确认",
+    "cancel": "取消",
+    "changePassword": "重置密码",
     "addNewItem": "添加新的项目",
     "filter": "筛选",
     "applyChanges": "应用更改",
@@ -21,13 +24,16 @@
     "createFirstRecord": "创建第一个记录"
   },
   "labels": {
+    "confirm": "确认删除",
     "navigation": "导航",
     "pages": "页面",
     "selectedRecords": "已选中 ({{selected}})",
     "filters": "筛选器",
     "adminVersion": "Admin: {{version}}",
     "appVersion": "App: {{version}}",
-    "dashboard": "首页"
+    "dashboard": "首页",
+    "manager": "用户管理",
+    "project": "项目列表"
   },
   "components": {
     "LanguageSelector": {
@@ -61,7 +67,32 @@
     "id": "ID",
     "createdAt": "创建于",
     "updatedAt": "更新于",
-    "roles": "用户角色"
+    "status": {
+      "Draft": "草稿",
+      "Pending": "待审核",
+      "Approved": "已批准",
+      "ACTIVE": "启用",
+      "INACTIVE": "禁用"
+    },
+    "name": {
+      "USER": "普通用户",
+      "ADMIN": "管理员",
+      "SUPER_ADMIN": "超级管理员"
+    },
+    "USER": "普通用户",
+    "ADMIN": "管理员",
+    "SUPER_ADMIN": "超级管理员",
+    "Draft": "草稿",
+    "Pending": "待审核",
+    "Approved": "已批准",
+    "ACTIVE": "启用",
+    "INACTIVE": "禁用",
+    "department_1": {
+      "file": ""
+    },
+    "department_2": {
+      "file": ""
+    }
   },
   "resources": {
     "User": {
@@ -72,13 +103,19 @@
         "username": "用户名",
         "password": "密码",
         "passwordConfirmation": "密码确认",
+        "newPassword": "密码",
         "encryptedPassword": "加密密码",
         "nick": "姓名",
         "roles": "用户角色",
+        "status": "用户状态",
+        "unionId": "Union Id",
+        "openId": "Open Id",
         "passwordResetToken": "密码重置令牌",
         "mobile": "电话号码",
         "avatarUrl": "头像",
-        "status": "用户状态"
+        "USER": "普通用户",
+        "ADMIN": "管理员",
+        "SUPER_ADMIN": "超级管理员"
       }
     },
     "Role": {
@@ -87,7 +124,8 @@
       },
       "properties": {
         "name": "名称",
-        "users": "用户"
+        "users": "用户",
+        "comment": "备注"
       }
     },
     "UserRoles": {
@@ -97,6 +135,43 @@
       "properties": {
         "user": "用户",
         "role": "角色"
+      }
+    },
+    "Project": {
+      "labels": {
+        "Project": "项目"
+      },
+      "properties": {
+        "name": "项目名称",
+        "status": "项目状态",
+        "department_1": "一级部门",
+        "department_2": "二级部门",
+        "key": "Key",
+        "bucket": "Bucket",
+        "mime": "Mime",
+        "size": "Size",
+        "tags": "标签",
+        "comment": "备注"
+      }
+    },
+    "Tag": {
+      "labels": {
+        "Tag": "标签"
+      },
+      "properties": {
+        "name": "项目名称",
+        "projects": "项目列表", 
+        "comment": "备注"
+      }
+    },
+    "ProjectTags": {
+      "labels": {
+        "ProjectTags": "项目标签"
+      }
+    },
+    "Log": {
+      "labels": {
+        "Log": "日志"
       }
     }
   },

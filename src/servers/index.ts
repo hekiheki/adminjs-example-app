@@ -2,13 +2,13 @@ import path from 'path';
 import express, { Express } from 'express';
 import cors from 'cors';
 import AdminJS from 'adminjs';
-import * as url from 'url';
+import { fileURLToPath } from 'url';
 import router from './router.js';
 
 import { generateAdminJSConfig } from '../admin/index.js';
 import { expressAuthenticatedRouter } from '../admin/router.js';
 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 const attachAdminJS = async (app: Express) => {
   const config = generateAdminJSConfig();
@@ -22,7 +22,7 @@ const attachAdminJS = async (app: Express) => {
   app.use(adminJS.options.rootPath, adminRouter);
   app.use(adminJS.options.rootPath, router);
   app.get('/', (req, res) => res.redirect(adminJS.options.rootPath));
-  app.use(express.static(path.join(__dirname, '../../../public')));
+  app.use(express.static(path.join(__dirname, '../../public')));
 };
 
 const start = async () => {

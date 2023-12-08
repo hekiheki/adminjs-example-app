@@ -1,5 +1,4 @@
 import { BaseAuthProvider, LoginHandlerOptions } from 'adminjs';
-import { SessionData } from '@adminjs/express';
 
 export class DefaultAuthProvider extends BaseAuthProvider {
   protected readonly authenticate;

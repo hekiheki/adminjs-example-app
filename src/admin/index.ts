@@ -33,6 +33,7 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
   version: { admin: false, app: '2.0.0' },
   rootPath: '/',
   loginPath: '/login',
+  logoutPath: '/logout',
   locale,
   assets: {
     styles: ['/custom.css'],

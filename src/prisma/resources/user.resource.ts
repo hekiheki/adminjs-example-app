@@ -93,6 +93,12 @@ export const CreateUserResource: ResourceFunction<{
       show: {
         after: [getManyToManyReferencesValuesAfterHook],
       },
+      list: {
+        isAccessible: ({ currentAdmin }) => {
+          // console.log('currentAdmin', currentAdmin);
+          return true;
+        },
+      },
     },
   },
 });

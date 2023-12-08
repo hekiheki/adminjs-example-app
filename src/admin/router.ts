@@ -12,12 +12,22 @@ export const authenticate = async ({ username, password }) => {
     where: {
       username,
     },
+    include: {
+      roles: true,
+    },
   });
   if (user && (await argon2.verify(user.password, password))) {
-    return Promise.resolve(user);
+    return Promise.resolve({
+      id: user.id,
+      username: user.username,
+      roles: user.roles.map((role) => role.roleId),
+      mobile: user.mobile,
+      nick: user.nick,
+      avatarUrl: user.avatarUrl,
+      status: user.status,
+    });
   }
   return null;
-  // return Promise.resolve({ username, password });
 };
 
 export const authProvider = new DefaultAuthProvider({
@@ -38,6 +48,7 @@ export const expressAuthenticatedRouter = (adminJs: AdminJS, router: Router | nu
       cookieName: process.env.NAME,
       cookiePassword: process.env.SESSION_SECRET,
       provider: authProvider,
+      maxRetries: 5,
     },
     router,
     {

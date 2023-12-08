@@ -17,10 +17,10 @@ const attachAdminJS = async (app: Express) => {
   if (process.env.NODE_ENV === 'production') await adminJS.initialize();
   else adminJS.watch();
 
-  const adminRouter = expressAuthenticatedRouter(adminJS);
+  const adminRouter = expressAuthenticatedRouter(adminJS, router);
 
   app.use(adminJS.options.rootPath, adminRouter);
-  app.use(adminJS.options.rootPath, router);
+
   app.get('/', (req, res) => res.redirect(adminJS.options.rootPath));
   app.use(express.static(path.join(__dirname, '../../public')));
 };

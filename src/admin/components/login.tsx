@@ -99,7 +99,7 @@ export const Login: React.FC<LoginProps> = (props) => {
                 variant="danger"
               />
             )}
-            <Link href="/sso/login" ml="md">
+            <Link href="/auth/login" ml="md">
               {translateComponent('Login.ssoLogin')}
             </Link>
             <FormGroup>

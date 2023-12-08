@@ -15,5 +15,11 @@ export const CreateTagResource: ResourceFunction<{
   options: {
     navigation: menu.project,
     properties: {},
+    actions: {
+      list: {
+        showFilter: false,
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(2),
+      },
+    },
   },
 });

@@ -1,6 +1,6 @@
 import { menu } from '../../admin/index.js';
+import { Roles } from '@prisma/client';
 import {
-  manyToManyReferencesAfterHook,
   getManyToManyReferencesValuesAfterHook,
   postManyToManyReferencesValuesAfterHook,
 } from '../../admin/hooks/index.js';
@@ -94,10 +94,7 @@ export const CreateUserResource: ResourceFunction<{
         after: [getManyToManyReferencesValuesAfterHook],
       },
       list: {
-        isAccessible: ({ currentAdmin }) => {
-          // console.log('currentAdmin', currentAdmin);
-          return true;
-        },
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(3),
       },
     },
   },

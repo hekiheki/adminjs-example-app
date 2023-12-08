@@ -67,5 +67,11 @@ export const CreateProjectResource: ResourceFunction<{
       ...filePropertiesFor('department_1', { isArray: true }),
       ...filePropertiesFor('department_2', { isArray: true }),
     },
+    actions: {
+      list: {
+        isAccessible: ({ currentAdmin }) =>
+          currentAdmin && (currentAdmin.roles.includes(1) || currentAdmin.roles.includes(2)),
+      },
+    },
   },
 });

@@ -29,5 +29,10 @@ export const CreateUserRolesResource: ResourceFunction<{
         position: 2,
       },
     },
+    actions: {
+      list: {
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(3),
+      },
+    },
   },
 });

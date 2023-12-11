@@ -79,3 +79,17 @@ export const postManyToManyReferencesValuesAfterHook = async (
   }
   return response;
 };
+
+export const defaultValuesBeforeHook = async (request, context) => {
+  const { payload, method } = request;
+  if (method !== 'post' || !payload || context.action.name !== 'new') {
+    return request;
+  }
+  const { properties } = context.resource.decorate().toJSON(context.currentAdmin);
+  Object.entries(properties).forEach(([name, { custom }]: any[]) => {
+    if (custom.defaultValue && payload[name] === undefined) {
+      payload[name] = custom.defaultValue;
+    }
+  });
+  return request;
+};

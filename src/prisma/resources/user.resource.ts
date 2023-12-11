@@ -4,7 +4,7 @@ import {
   postManyToManyReferencesValuesAfterHook,
 } from '../../admin/hooks/index.js';
 import { useEnvironmentVariableToDisableActions, usePasswordsFeature } from '../../admin/features/index.js';
-import { MANY_TO_MANY_EDIT, MANY_TO_MANY_LIST, MANY_TO_MANY_SHOW } from '../../admin/components.bundler.js';
+import { MANY_TO_MANY_EDIT, MANY_TO_MANY_SHOW } from '../../admin/components.bundler.js';
 import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
 

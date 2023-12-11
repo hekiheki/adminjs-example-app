@@ -137,6 +137,16 @@
         "role": "角色"
       }
     },
+    "Pending": {
+      "labels": {
+        "Pending": "待审核"
+      }
+    },
+    "Approved": {
+      "labels": {
+        "Approved": "已归档"
+      }
+    },
     "Project": {
       "labels": {
         "Project": "项目"

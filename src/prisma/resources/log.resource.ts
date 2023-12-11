@@ -11,6 +11,7 @@ export const CreateLogResource = () =>
       client,
     },
     featureOptions: {
+      componentLoader,
       propertiesMapping: {
         user: 'userId',
       },

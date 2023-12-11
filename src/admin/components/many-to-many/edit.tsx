@@ -36,7 +36,6 @@ const EditManyToManyInput: FC<CombinedProps> = (props) => {
 
   const selectedValues = flat.unflatten(record.params)[property.path] || [];
 
-  const [loadingRecord] = useState(0);
   const selectedValuesToOptions = selectedValues.map((selectedValue) => ({
     value: Number(selectedValue.id),
     label: translateProperty(selectedValue.name, resourceId),
@@ -80,7 +79,6 @@ const EditManyToManyInput: FC<CombinedProps> = (props) => {
         onChange={handleChange}
         isClearable
         isDisabled={property.isDisabled}
-        isLoading={!!loadingRecord}
         {...property.props}
       />
       <FormMessage>{error?.message}</FormMessage>

@@ -1,5 +1,4 @@
 import { menu } from '../../admin/index.js';
-import { Roles } from '@prisma/client';
 import {
   getManyToManyReferencesValuesAfterHook,
   postManyToManyReferencesValuesAfterHook,

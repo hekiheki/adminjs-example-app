@@ -23,47 +23,6 @@ const fetchReferencesValues = async (properties: any, recordId: number, client: 
   return results;
 };
 
-export const manyToManyReferencesAfterHook = async (
-  response: RecordActionResponse,
-  request: ActionRequest,
-  context: any,
-) => {
-  const { method } = request;
-  const { properties } = context.resource.decorate().toJSON(context.currentAdmin);
-  const client = context.resource.client;
-  const manyReferences = getReferencesProperties(properties);
-  const recordId = response.record?.params?.id;
-  const payload = flat.unflatten(request.payload);
-  if (method === 'get' && recordId) {
-    const referenceValues = await fetchReferencesValues(manyReferences, recordId, client);
-    manyReferences.forEach(([name], index) => {
-      response.record.params[name] = referenceValues[index];
-    });
-  }
-  if (method === 'post' && context.record.isValid() && recordId) {
-    await Promise.all(
-      manyReferences.map(async ([name, { custom }]: [string, any]) => {
-        if (!payload[name]) return;
-        const results = payload[name].map((item) => Number(item.id));
-        if (results && results.length) {
-          await client[custom.reference].deleteMany({
-            where: {
-              [custom.resourceId]: recordId,
-            },
-          });
-          await client[custom.reference].createMany({
-            data: results.map((val) => ({
-              [custom.resourceId]: recordId,
-              [custom.referenceId]: val,
-            })),
-          });
-        }
-      }),
-    );
-  }
-  return response;
-};
-
 export const getManyToManyReferencesValuesAfterHook = async (
   response: RecordActionResponse,
   request: ActionRequest,

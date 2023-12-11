@@ -1,4 +1,4 @@
-import { Box, Avatar, Text } from '@adminjs/design-system';
+import { Box, Avatar, Text, Icon } from '@adminjs/design-system';
 import { ReduxState } from 'adminjs';
 import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
@@ -15,7 +15,7 @@ const TopBar: FC = () => {
         {nick || username}
       </Text>
       <Avatar src={avatarUrl} alt={nick || username} mr="lg">
-        {(nick || username).toUpperCase()}
+        <Icon icon="User" />
       </Avatar>
     </Box>
   );

@@ -18,7 +18,8 @@ export const CreateTagResource: ResourceFunction<{
     actions: {
       list: {
         showFilter: false,
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(2),
+        isAccessible: ({ currentAdmin }) =>
+          currentAdmin && (currentAdmin.roles.includes(2) || currentAdmin.roles.includes(3)),
       },
     },
   },

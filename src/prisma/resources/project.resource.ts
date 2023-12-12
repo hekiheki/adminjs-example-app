@@ -106,17 +106,17 @@ export const CreateProjectResource = (status = 'Pending') => {
           before: async (request, context) => {
             const { currentAdmin } = context;
             const { query = {} } = request;
-            if (currentAdmin && currentAdmin.roles.includes(2)) {
+            if (currentAdmin && currentAdmin.roles.includes(1)) {
               const newQuery = {
                 ...query,
                 ['filters.status']: status,
+                ['filters.user']: currentAdmin?.id,
               };
               request.query = newQuery;
             } else {
               const newQuery = {
                 ...query,
                 ['filters.status']: status,
-                ['filters.id']: currentAdmin?.id,
               };
               request.query = newQuery;
             }
@@ -139,10 +139,12 @@ export const CreateProjectResource = (status = 'Pending') => {
               );
             }
 
-            const params = paramConverter.prepareParams(request.payload ?? { status: 'Approved' }, resource);
+            const params = paramConverter.prepareParams({ ...request.payload, status: 'Approved' }, resource);
 
             const newRecord = await record.update(params, context);
             const [populatedRecord] = await populator([newRecord], context);
+
+            console.log(request.payload, newRecord);
 
             // eslint-disable-next-line no-param-reassign
             context.record = populatedRecord;

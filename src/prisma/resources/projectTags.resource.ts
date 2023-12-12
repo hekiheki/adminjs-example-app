@@ -17,7 +17,8 @@ export const CreateProjectTagsResource: ResourceFunction<{
     properties: {},
     actions: {
       list: {
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(2),
+        isAccessible: ({ currentAdmin }) =>
+          currentAdmin && (currentAdmin.roles.includes(2) || currentAdmin.roles.includes(3)),
       },
     },
   },

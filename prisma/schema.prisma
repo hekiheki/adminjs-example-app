@@ -36,6 +36,7 @@ model User {
   mobile        String?
   stateCode     String?
   roles         UserRoles[]
+  projects      Project[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 }
@@ -78,20 +79,22 @@ model Project {
   department_1  Json?
   department_2  Json?
   tags          ProjectTags[]
-  status        ProjectStatus   @default(Draft)
+  status        ProjectStatus   @default(Pending)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  userId         Int
+  user           User          @relation(fields: [userId], references: [id])
 }
 
 model ProjectTags {
   id            Int        @id @default(autoincrement())
   projectId     Int
-  TagId         Int
+  tagId         Int
   project       Project   @relation(fields: [projectId], references: [id])
-  tag           Tag       @relation(fields: [TagId], references: [id])
+  tag           Tag       @relation(fields: [tagId], references: [id])
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  @@unique([projectId, TagId])
+  @@unique([projectId, tagId])
 }
 
 model Tag {

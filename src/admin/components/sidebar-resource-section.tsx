@@ -7,8 +7,6 @@ const SidebarResourceSection: FC<SidebarResourceSectionProps> = ({ resources }) 
   const elements = useNavigationResources(resources);
   const { translateLabel } = useTranslation();
 
-  console.log(resources);
-
   return <Navigation label={translateLabel('navigation')} elements={elements} />;
 };
 

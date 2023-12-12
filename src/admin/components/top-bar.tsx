@@ -1,9 +1,10 @@
-import { Box, Avatar, Text, Icon } from '@adminjs/design-system';
-import { ReduxState } from 'adminjs';
+import { Box, Avatar, Text, Icon, Link } from '@adminjs/design-system';
+import { ReduxState, useTranslation } from 'adminjs';
 import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 
 const TopBar: FC = () => {
+  const { translateComponent } = useTranslation();
   const session = useSelector((state: ReduxState) => state.session);
   const { username, nick, avatarUrl } = session;
 
@@ -17,6 +18,11 @@ const TopBar: FC = () => {
       <Avatar src={avatarUrl} alt={nick || username} mr="lg">
         <Icon icon="User" />
       </Avatar>
+      <Link href="/logout" ml="md">
+        <Icon icon="LogOut" />
+
+        {/* {translateComponent('Login.logout')} */}
+      </Link>
     </Box>
   );
 };

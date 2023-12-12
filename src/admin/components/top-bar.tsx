@@ -20,8 +20,6 @@ const TopBar: FC = () => {
       </Avatar>
       <Link href="/logout" ml="md">
         <Icon icon="LogOut" />
-
-        {/* {translateComponent('Login.logout')} */}
       </Link>
     </Box>
   );

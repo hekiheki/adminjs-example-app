@@ -14,7 +14,22 @@ export const CreateProjectTagsResource: ResourceFunction<{
   features: [useEnvironmentVariableToDisableActions()],
   options: {
     navigation: menu.project,
-    properties: {},
+    properties: {
+      id: {
+        isVisible: false,
+      },
+      project: {
+        isVisible: true,
+        isTitle: true,
+        position: 1,
+        reference: 'Approved',
+      },
+      tag: {
+        isVisible: true,
+        isTitle: true,
+        position: 2,
+      },
+    },
     actions: {
       list: {
         isAccessible: ({ currentAdmin }) =>

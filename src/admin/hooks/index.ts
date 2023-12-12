@@ -89,7 +89,6 @@ export const defaultValuesBeforeHook = async (request, context) => {
   Object.entries(properties).forEach(([name, { custom }]: any[]) => {
     if (custom.defaultValue && payload[name] === undefined) {
       payload[name] = custom.defaultValue;
-      payload.user = context.currentAdmin.id;
     }
   });
   return request;

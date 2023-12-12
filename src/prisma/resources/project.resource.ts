@@ -87,6 +87,33 @@ export const CreateProjectResource = (status = 'Pending') => {
           isTitle: true,
           position: 4,
         },
+        owner: {
+          isVisible: {
+            list: status === 'Approved',
+            edit: false,
+            show: status === 'Approved',
+            filter: status === 'Approved',
+          },
+          position: 5,
+        },
+        approvedBy: {
+          isVisible: {
+            list: status === 'Approved',
+            edit: false,
+            show: status === 'Approved',
+            filter: status === 'Approved',
+          },
+          position: 6,
+        },
+        approvedAt: {
+          isVisible: {
+            list: false,
+            edit: false,
+            show: status === 'Approved',
+            filter: status === 'Approved',
+          },
+          position: 7,
+        },
         ...fileProperties(),
         ...filePropertiesFor('department_1', { isArray: true }),
         ...filePropertiesFor('department_2', { isArray: true }),
@@ -96,21 +123,36 @@ export const CreateProjectResource = (status = 'Pending') => {
           isAccessible: false,
           isVisible: false,
         },
+        delete: {
+          isAccessible: false,
+          isVisible: false,
+        },
         new: {
           isAccessible: ({ currentAdmin }) => {
             return currentAdmin && currentAdmin.roles.includes(1) && status === 'Pending';
           },
-          before: [defaultValuesBeforeHook],
+          before: [
+            defaultValuesBeforeHook,
+            async (request, context) => {
+              const { payload, method } = request;
+              if (method !== 'post' || !payload) {
+                return request;
+              }
+              const { currentAdmin } = context;
+              payload.owner = currentAdmin?.id;
+              return request;
+            },
+          ],
         },
         list: {
           before: async (request, context) => {
             const { currentAdmin } = context;
             const { query = {} } = request;
-            if (currentAdmin && currentAdmin.roles.includes(1)) {
+            if (currentAdmin.roles.length === 1 && currentAdmin.roles.includes(1)) {
               const newQuery = {
                 ...query,
                 ['filters.status']: status,
-                ['filters.user']: currentAdmin?.id,
+                ['filters.owner']: currentAdmin?.id,
               };
               request.query = newQuery;
             } else {
@@ -122,7 +164,6 @@ export const CreateProjectResource = (status = 'Pending') => {
             }
             return request;
           },
-          // after: [customAfter],
         },
         approved: {
           actionType: 'record',
@@ -138,13 +179,13 @@ export const CreateProjectResource = (status = 'Pending') => {
                 'Action#handler',
               );
             }
-
-            const params = paramConverter.prepareParams({ ...request.payload, status: 'Approved' }, resource);
+            request.payload.status = 'Approved';
+            request.payload.approvedBy = currentAdmin.id;
+            request.payload.approvedAt = new Date();
+            const params = paramConverter.prepareParams(request.payload ?? {}, resource);
 
             const newRecord = await record.update(params, context);
             const [populatedRecord] = await populator([newRecord], context);
-
-            console.log(request.payload, newRecord);
 
             // eslint-disable-next-line no-param-reassign
             context.record = populatedRecord;

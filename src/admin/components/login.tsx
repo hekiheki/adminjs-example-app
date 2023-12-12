@@ -19,7 +19,7 @@ import {
 } from '@adminjs/design-system';
 import { styled } from '@adminjs/design-system/styled-components';
 import { ReduxState, useTranslation } from 'adminjs';
-import { AuthUser, AuthUsers } from '../constants/authUsers.js';
+import { AuthUser } from '../constants/authUsers.js';
 
 const Wrapper = styled(Box)<BoxProps>`
   align-items: center;
@@ -56,9 +56,7 @@ export type LoginProps = {
 export const Login: React.FC<LoginProps> = (props) => {
   const { action, errorMessage } = props;
   const { translateComponent, translateMessage } = useTranslation();
-  const [defaultUser] = AuthUsers;
   const branding = useSelector((state: ReduxState) => state.branding);
-  // const message = `Username: ${defaultUser.username}\nPassword: ${defaultUser.password}`;
   return (
     <React.Fragment>
       <Wrapper flex variant="grey">
@@ -99,16 +97,9 @@ export const Login: React.FC<LoginProps> = (props) => {
                 variant="danger"
               />
             )}
-            <Link href="/auth/login" ml="md">
-              {translateComponent('Login.ssoLogin')}
-            </Link>
             <FormGroup>
               <Label required>{translateComponent('Login.properties.username')}</Label>
-              <Input
-                name="username"
-                placeholder={translateComponent('Login.properties.username')}
-                defaultValue={defaultUser.username}
-              />
+              <Input name="username" placeholder={translateComponent('Login.properties.username')} />
             </FormGroup>
             <FormGroup>
               <Label required>{translateComponent('Login.properties.password')}</Label>
@@ -117,9 +108,11 @@ export const Login: React.FC<LoginProps> = (props) => {
                 name="password"
                 placeholder={translateComponent('Login.properties.password')}
                 autoComplete="new-password"
-                defaultValue={defaultUser.password}
               />
             </FormGroup>
+            <Link href="/auth/login" ml="md">
+              {translateComponent('Login.ssoLogin')}
+            </Link>
             <Text mt="xl" textAlign="center">
               <Button variant="contained">{translateComponent('Login.loginButton')}</Button>
             </Text>

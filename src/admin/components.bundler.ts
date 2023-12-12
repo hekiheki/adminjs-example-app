@@ -17,7 +17,6 @@ export const override = (url: string, componentName: OverridableComponent): stri
 override('components/top-bar', 'Version');
 override('components/login', 'Login');
 override('components/sidebar-resource-section', 'SidebarResourceSection');
-// override('components/auth', 'AuthenticationBackgroundComponent');
 
 /**
  * Common components
@@ -32,5 +31,4 @@ export const MANY_TO_MANY_SHOW = add('components/many-to-many/show', 'ManyToMany
 /**
  * Pages
  */
-export const CUSTOM_PAGE = add('pages/custom-page', 'CustomPage');
-export const DESIGN_SYSTEM_PAGE = add('pages/design-system-examples/index', 'DesignSystemPage');
+export const HOME = add('pages/home-page', 'Home');

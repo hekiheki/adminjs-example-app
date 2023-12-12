@@ -1,7 +1,12 @@
-import { flat, NotFoundError, populator, paramConverter } from 'adminjs';
+import { NotFoundError, populator, paramConverter } from 'adminjs';
 import { menu } from '../../admin/index.js';
 import { useUploadFeature } from '../../admin/features/index.js';
-import { defaultValuesBeforeHook } from '../../admin/hooks/index.js';
+import {
+  defaultValuesBeforeHook,
+  getManyToManyReferencesValuesAfterHook,
+  postManyToManyReferencesValuesAfterHook,
+} from '../../admin/hooks/index.js';
+import { MANY_TO_MANY_EDIT, MANY_TO_MANY_SHOW } from '../../admin/components.bundler.js';
 import { client, dmmf } from '../config.js';
 
 const fileProperties = (options = {}) =>
@@ -87,6 +92,27 @@ export const CreateProjectResource = (status = 'Pending') => {
           isTitle: true,
           position: 4,
         },
+        tags: {
+          reference: 'Tag',
+          isVisible: {
+            list: status === 'Approved',
+            show: status === 'Approved',
+            filter: status === 'Approved',
+            edit: status === 'Approved',
+          },
+          isArray: false,
+          components: {
+            show: MANY_TO_MANY_SHOW,
+            edit: MANY_TO_MANY_EDIT,
+          },
+          custom: {
+            includeId: 'role',
+            reference: 'UserRoles',
+            resourceId: 'userId',
+            referenceId: 'roleId',
+            default: 'USER',
+          },
+        },
         owner: {
           isVisible: {
             list: status === 'Approved',
@@ -124,12 +150,14 @@ export const CreateProjectResource = (status = 'Pending') => {
           isVisible: false,
         },
         delete: {
-          isAccessible: false,
+          isAccessible: ({ currentAdmin }) => {
+            return currentAdmin && (currentAdmin.roles.includes(2) || currentAdmin.roles.includes(3));
+          },
           isVisible: false,
         },
         new: {
           isAccessible: ({ currentAdmin }) => {
-            return currentAdmin && currentAdmin.roles.includes(1) && status === 'Pending';
+            return currentAdmin && status === 'Pending';
           },
           before: [
             defaultValuesBeforeHook,

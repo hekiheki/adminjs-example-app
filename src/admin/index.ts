@@ -12,7 +12,7 @@ import {
   CreateLogResource,
 } from '../prisma/resources/index.js';
 import './components.bundler.js';
-import { componentLoader, CUSTOM_PAGE } from './components.bundler.js';
+import { componentLoader, HOME } from './components.bundler.js';
 import { locale } from './locale/index.js';
 import { customTheme } from '../themes/index.js';
 
@@ -30,7 +30,7 @@ export const menu: Record<string, ResourceOptions['navigation']> = {
 };
 
 export const generateAdminJSConfig: () => AdminJSOptions = () => ({
-  version: { admin: false, app: '2.0.0' },
+  // version: { admin: false, app: '2.0.0' },
   rootPath: '/',
   loginPath: '/login',
   logoutPath: '/logout',
@@ -45,9 +45,10 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
     theme: {
       colors: { primary100: '#4D70EB' },
     },
+    withMadeWithLove: false,
   },
   dashboard: {
-    component: CUSTOM_PAGE,
+    component: HOME,
   },
   defaultTheme: 'light',
   availableThemes: [light, dark, customTheme],

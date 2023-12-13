@@ -129,13 +129,25 @@
         "comment": "备注"
       }
     },
-    "UserRoles": {
+    "user": {
       "labels": {
-        "UserRoles": "用户角色"
+        "user": "用户列表"
       },
       "properties": {
-        "user": "用户",
-        "role": "角色"
+        "user": "用户名",
+        "username": "用户名",
+        "role": "用户角色",
+        "userRole": "用户角色",
+        "password": "密码",
+        "passwordConfirmation": "密码确认",
+        "newPassword": "密码",
+        "encryptedPassword": "加密密码",
+        "nick": "姓名",
+        "mobile": "电话号码",
+        "avatarUrl": "头像",
+        "USER": "普通用户",
+        "ADMIN": "管理员",
+        "SUPER_ADMIN": "超级管理员"
       }
     },
     "Pending": {

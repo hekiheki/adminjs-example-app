@@ -78,8 +78,7 @@ const saveUser = async (userInfo) => {
         avatarUrl,
         mobile,
         stateCode,
-        username: mobile,
-        password: await argon2.hash('123456'),
+        username: nick,
       },
     });
 
@@ -89,7 +88,7 @@ const saveUser = async (userInfo) => {
       },
     });
 
-    await client.userRoles.createMany({
+    await client.userRoles.create({
       data: {
         roleId: defaultRole.id,
         userId: newUser.id,

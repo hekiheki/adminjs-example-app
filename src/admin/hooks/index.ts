@@ -37,6 +37,7 @@ export const getManyToManyReferencesValuesAfterHook = async (
     const referenceValues = await fetchReferencesValues(referencesProperties, recordId, client);
     referencesProperties.forEach(([name]: any[], index) => {
       response.record.params[name] = referenceValues[index];
+      console.log(response.record.params[name]);
     });
   }
   return response;

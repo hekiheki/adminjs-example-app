@@ -19,7 +19,7 @@ export const CreateLogResource = () =>
         navigation: menu.manager,
         actions: {
           list: {
-            isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(3),
+            isAccessible: false,
           },
         },
       },

@@ -14,7 +14,21 @@ export const CreateTagResource: ResourceFunction<{
   features: [useEnvironmentVariableToDisableActions()],
   options: {
     navigation: menu.project,
-    properties: {},
+    properties: {
+      id: {
+        isVisible: { list: true, show: false, edit: false, filter: false },
+        position: 1,
+      },
+      name: {
+        isVisible: { list: true, show: true, edit: true, filter: false },
+        isTitle: true,
+        position: 2,
+      },
+      comment: {
+        isVisible: false,
+        position: 3,
+      },
+    },
     actions: {
       list: {
         showFilter: false,

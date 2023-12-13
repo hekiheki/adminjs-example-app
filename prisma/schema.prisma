@@ -27,7 +27,7 @@ enum ProjectStatus {
 model User {
   id            Int           @id @default(autoincrement())
   username      String        @unique @db.VarChar(255)
-  password      String
+  password      String?
   status        UserStatus    @default(ACTIVE)
   unionId       String?       @unique
   openId        String?       @unique

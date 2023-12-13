@@ -77,7 +77,7 @@ const EditManyToManyInput: FC<CombinedProps> = (props) => {
         defaultOptions
         loadOptions={loadOptions}
         onChange={handleChange}
-        isClearable
+        isClearable={false}
         isDisabled={property.isDisabled}
         {...property.props}
       />

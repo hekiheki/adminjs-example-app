@@ -1,11 +1,7 @@
 import { NotFoundError, populator, paramConverter } from 'adminjs';
 import { menu } from '../../admin/index.js';
 import { useUploadFeature } from '../../admin/features/index.js';
-import {
-  defaultValuesBeforeHook,
-  getManyToManyReferencesValuesAfterHook,
-  postManyToManyReferencesValuesAfterHook,
-} from '../../admin/hooks/index.js';
+import { defaultValuesBeforeHook } from '../../admin/hooks/index.js';
 import { MANY_TO_MANY_EDIT, MANY_TO_MANY_SHOW } from '../../admin/components.bundler.js';
 import { client, dmmf } from '../config.js';
 
@@ -46,6 +42,16 @@ const filePropertiesFor = (name, options = {}) => {
     }),
     {},
   );
+};
+
+const setProjectOwnerHook = async (request, context) => {
+  const { payload, method } = request;
+  if (method !== 'post' || !payload) {
+    return request;
+  }
+  const { currentAdmin } = context;
+  payload.owner = currentAdmin?.id;
+  return request;
 };
 
 export const CreateProjectResource = (status = 'Pending') => {
@@ -159,18 +165,7 @@ export const CreateProjectResource = (status = 'Pending') => {
           isAccessible: ({ currentAdmin }) => {
             return currentAdmin && status === 'Pending';
           },
-          before: [
-            defaultValuesBeforeHook,
-            async (request, context) => {
-              const { payload, method } = request;
-              if (method !== 'post' || !payload) {
-                return request;
-              }
-              const { currentAdmin } = context;
-              payload.owner = currentAdmin?.id;
-              return request;
-            },
-          ],
+          before: [defaultValuesBeforeHook, setProjectOwnerHook],
         },
         list: {
           before: async (request, context) => {
@@ -197,7 +192,9 @@ export const CreateProjectResource = (status = 'Pending') => {
           actionType: 'record',
           component: false,
           isAccessible: ({ currentAdmin }) => {
-            return currentAdmin && currentAdmin.roles.includes(2) && status === 'Pending';
+            return (
+              currentAdmin && (currentAdmin.roles.includes(2) || currentAdmin.roles.includes(3)) && status === 'Pending'
+            );
           },
           handler: async (request, response, context) => {
             const { record, resource, currentAdmin, h } = context;

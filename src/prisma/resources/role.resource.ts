@@ -19,7 +19,7 @@ export const CreateRoleResource: ResourceFunction<{
   },
   features: [useEnvironmentVariableToDisableActions()],
   options: {
-    navigation: false,
+    navigation: menu.manager,
     properties: {
       id: {
         isVisible: { list: true, show: false, edit: false, filter: false },
@@ -48,11 +48,16 @@ export const CreateRoleResource: ResourceFunction<{
         isAccessible: false,
         isVisible: false,
       },
+      bulkDelete: {
+        isAccessible: false,
+        isVisible: false,
+      },
       list: {
         showFilter: false,
-        isAccessible: false,
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(3),
       },
       show: {
+        isVisible: false,
         after: async (response) => {
           const { record } = response;
           response.record.title = ROLES[record.id];

@@ -1,7 +1,6 @@
-import { NotFoundError, populator, paramConverter } from 'adminjs';
+import { NotFoundError, populator, paramConverter, ValidationError, flat } from 'adminjs';
 import { menu } from '../../admin/index.js';
 import { useUploadFeature } from '../../admin/features/index.js';
-import { defaultValuesBeforeHook } from '../../admin/hooks/index.js';
 import { MANY_TO_MANY_EDIT, MANY_TO_MANY_SHOW } from '../../admin/components.bundler.js';
 import { client, dmmf } from '../config.js';
 
@@ -44,16 +43,6 @@ const filePropertiesFor = (name, options = {}) => {
   );
 };
 
-const setProjectOwnerHook = async (request, context) => {
-  const { payload, method } = request;
-  if (method !== 'post' || !payload) {
-    return request;
-  }
-  const { currentAdmin } = context;
-  payload.owner = currentAdmin?.id;
-  return request;
-};
-
 export const CreateProjectResource = (status = 'Pending') => {
   return {
     resource: {
@@ -73,12 +62,12 @@ export const CreateProjectResource = (status = 'Pending') => {
         },
         department_1: {
           type: 'mixed',
-          isTitle: true,
+          isRequired: true,
           position: 2,
         },
         department_2: {
           type: 'mixed',
-          isTitle: true,
+          isRequired: true,
           position: 3,
         },
         id: {
@@ -92,10 +81,6 @@ export const CreateProjectResource = (status = 'Pending') => {
             show: true,
             filter: false,
           },
-          custom: {
-            defaultValue: 'Pending',
-          },
-          isTitle: true,
           position: 4,
         },
         tags: {
@@ -146,7 +131,7 @@ export const CreateProjectResource = (status = 'Pending') => {
           },
           position: 7,
         },
-        ...fileProperties(),
+        // ...fileProperties(),
         ...filePropertiesFor('department_1', { isArray: true }),
         ...filePropertiesFor('department_2', { isArray: true }),
       },
@@ -159,13 +144,43 @@ export const CreateProjectResource = (status = 'Pending') => {
           isAccessible: ({ currentAdmin }) => {
             return currentAdmin && (currentAdmin.roles.includes(2) || currentAdmin.roles.includes(3));
           },
-          isVisible: false,
+          // isVisible: false,
         },
         new: {
           isAccessible: ({ currentAdmin }) => {
             return currentAdmin && status === 'Pending';
           },
-          before: [defaultValuesBeforeHook, setProjectOwnerHook],
+          before: async (request, context) => {
+            const { currentAdmin } = context;
+            request.payload.status = 'Pending';
+            request.payload.owner = currentAdmin.id;
+            return request;
+          },
+          after: async (response, request, context) => {
+            const { record, resource, currentAdmin, h } = context;
+            if (!record) {
+              throw new NotFoundError(
+                [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
+                'Action#handler',
+              );
+            }
+            const { department_1, department_2 } = flat.unflatten(record.params);
+            if (!department_1 || !department_2) {
+              await client.project.delete({
+                where: {
+                  id: record.params.id,
+                },
+              });
+              return {
+                record: record.toJSON(currentAdmin),
+                notice: {
+                  message: '文件不能为空',
+                  type: 'error',
+                },
+              };
+            }
+            return response;
+          },
         },
         list: {
           before: async (request, context) => {

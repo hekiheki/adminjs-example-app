@@ -1,9 +1,7 @@
 import dotenv from 'dotenv';
-import { PrismaClient, Roles } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import argon2 from 'argon2';
-
-const roleList = [{ name: Roles.USER }, { name: Roles.ADMIN }, { name: Roles.SUPER_ADMIN }];
-const defaultUsers = [{ username: 'super_admin' }, { username: 'admin' }, { username: 'user' }];
+import { AuthUsers, AuthRoles } from '../../admin/constants/authUsers.js';
 
 dotenv.config({
   path: `${process.cwd()}/.env`,
@@ -13,22 +11,36 @@ const prisma = new PrismaClient();
 
 const run = async () => {
   try {
-    const hashedPassword = await argon2.hash('123456');
+    const initUserData = await Promise.all(
+      AuthUsers.map(async (user) => {
+        return {
+          ...user,
+          password: await argon2.hash(user.password),
+        };
+      }),
+    );
 
     await prisma.$connect();
 
     await prisma.$transaction(
-      defaultUsers.map(({ username }) =>
-        prisma.user.create({
-          data: {
-            username,
-            password: hashedPassword,
-          },
+      AuthRoles.map((role) =>
+        prisma.role.create({
+          data: role,
         }),
       ),
     );
 
-    await prisma.$transaction(roleList.map((role) => prisma.role.create({ data: role })));
+    await prisma.$transaction(
+      initUserData.map(({ username, password }) =>
+        prisma.user.create({
+          data: {
+            username,
+            password,
+            nick: username,
+          },
+        }),
+      ),
+    );
 
     const roles = await prisma.role.findMany();
     const users = await prisma.user.findMany();

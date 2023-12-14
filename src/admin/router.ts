@@ -8,6 +8,9 @@ import { componentLoader } from './components.bundler.js';
 import { DefaultAuthProvider } from './providers/auth-provider.js';
 
 export const authenticate = async ({ username, password }) => {
+  if (!username || !password) {
+    return null;
+  }
   const user = await client.user.findFirst({
     where: {
       username,
@@ -16,7 +19,8 @@ export const authenticate = async ({ username, password }) => {
       roles: true,
     },
   });
-  if (user && (await argon2.verify(user.password, password))) {
+  const isPasswordVerified = await argon2.verify(user.password, password);
+  if (isPasswordVerified) {
     return Promise.resolve({
       id: user.id,
       username: user.username,

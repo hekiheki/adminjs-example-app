@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import fetch from 'node-fetch';
 import { client } from '../prisma/config.js';
-import argon2 from 'argon2';
 import { Roles } from '@prisma/client';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import session from 'express-session';
@@ -78,13 +77,13 @@ const saveUser = async (userInfo) => {
         avatarUrl,
         mobile,
         stateCode,
-        username: nick,
+        username: mobile,
       },
     });
 
     const defaultRole = await client.role.findFirst({
       where: {
-        name: Roles.USER,
+        name: Roles.PUBLISHER,
       },
     });
 
@@ -97,7 +96,7 @@ const saveUser = async (userInfo) => {
 
     return {
       id: newUser.id,
-      username: newUser.username,
+      username: newUser.mobile,
       roles: [defaultRole.id],
       mobile: newUser.mobile,
       nick: newUser.nick,

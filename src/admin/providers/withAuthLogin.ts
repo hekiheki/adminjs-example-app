@@ -1,8 +1,7 @@
 import AdminJS from 'adminjs';
 import { Router } from 'express';
 import fetch from 'node-fetch';
-import { client } from '../prisma/config.js';
-import argon2 from 'argon2';
+import { client } from '../../prisma/config.js';
 import { Roles } from '@prisma/client';
 
 const requestUserToken = async (code) => {
@@ -51,9 +50,21 @@ const saveUser = async (userInfo) => {
     where: {
       unionId,
     },
+    select: {
+      id: true,
+      username: true,
+      roles: true,
+      mobile: true,
+      nick: true,
+      avatarUrl: true,
+      status: true,
+    },
   });
   if (user) {
-    return user;
+    return {
+      ...user,
+      roles: user.roles.map((role) => role.roleId),
+    };
   } else {
     const newUser = await client.user.create({
       data: {
@@ -64,23 +75,31 @@ const saveUser = async (userInfo) => {
         mobile,
         stateCode,
         username: mobile,
-        password: await argon2.hash('123456'),
       },
     });
 
     const defaultRole = await client.role.findFirst({
       where: {
-        name: Roles.USER,
+        name: Roles.PUBLISHER,
       },
     });
 
-    await client.userRoles.createMany({
+    await client.userRoles.create({
       data: {
         roleId: defaultRole.id,
         userId: newUser.id,
       },
     });
-    return newUser;
+
+    return {
+      id: newUser.id,
+      username: newUser.mobile,
+      roles: [defaultRole.id],
+      mobile: newUser.mobile,
+      nick: newUser.nick,
+      avatarUrl: newUser.avatarUrl,
+      status: newUser.status,
+    };
   }
 };
 

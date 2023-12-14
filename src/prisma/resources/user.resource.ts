@@ -3,6 +3,7 @@ import { useEnvironmentVariableToDisableActions, usePasswordsFeature } from '../
 import { MANY_TO_MANY_EDIT, MANY_TO_MANY_SHOW, MANY_TO_MANY_LIST } from '../../admin/components.bundler.js';
 import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
+import { menu } from '../../admin/index.js';
 
 export const getUserRolesHook = async (request, context) => {
   const { method, payload } = request;
@@ -96,17 +97,15 @@ export const CreateUserResource: ResourceFunction<{
   },
   features: [useEnvironmentVariableToDisableActions(), usePasswordsFeature()],
   options: {
-    navigation: false,
+    navigation: menu.manager,
     properties: {
       id: {
         isVisible: { list: true, show: false, edit: false, filter: false },
         isId: true,
         position: 1,
-        // isSortable: true,
       },
       username: {
         isVisible: true,
-        isTitle: true,
         position: 2,
         isSortable: true,
       },
@@ -115,8 +114,6 @@ export const CreateUserResource: ResourceFunction<{
       },
       status: {
         isVisible: false,
-        // isTitle: true,
-        // position: 6,
       },
       roles: {
         reference: 'Role',
@@ -150,7 +147,6 @@ export const CreateUserResource: ResourceFunction<{
       },
       mobile: {
         isVisible: { list: true, show: true, edit: false, filter: true },
-        isTitle: true,
         position: 5,
       },
       stateCode: {
@@ -160,14 +156,17 @@ export const CreateUserResource: ResourceFunction<{
     actions: {
       new: {
         isAccessible: false,
+        isVisible: false,
         after: [createUserRolesHook],
       },
       edit: {
         isAccessible: false,
+        isVisible: false,
         before: [getUserRolesHook, postUserRolesHook],
       },
       show: {
         isAccessible: false,
+        isVisible: false,
         before: [getUserRolesHook],
       },
       list: {

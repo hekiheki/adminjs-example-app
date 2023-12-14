@@ -54,9 +54,9 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
   availableThemes: [light, dark, customTheme],
   componentLoader,
   resources: [
+    CreateUserRolesResource(),
     CreateUserResource(),
     CreateRoleResource(),
-    CreateUserRolesResource(),
     CreateProjectResource(),
     CreateProjectResource('Approved'),
     CreateProjectTagsResource(),

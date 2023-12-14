@@ -13,9 +13,10 @@ enum UserStatus {
 }
 
 enum Roles {
-  USER
+  PUBLISHER
+  APPROVER
   ADMIN
-  SUPER_ADMIN
+  DEVELOPER
 }
 
 enum ProjectStatus {
@@ -55,7 +56,7 @@ model UserRoles {
 
 model Role {
   id            Int               @id @default(autoincrement())
-  name          Roles    @unique  @default(USER)
+  name          Roles    @unique  @default(PUBLISHER)
   comment       String?
   users         UserRoles[]
   createdAt     DateTime          @default(now())
@@ -72,11 +73,6 @@ model Session {
 model Project {
   id              Int           @id @default(autoincrement())
   name            String
-  key             String?       @unique
-  bucket          String?
-  mime            String?
-  size            Int?
-  comment         String?
   department_1    Json?
   department_2    Json?
   ownerId         Int

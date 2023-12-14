@@ -1,9 +1,9 @@
-import { NotFoundError, ValidationError } from 'adminjs';
+import { NotFoundError, ValidationError, paramConverter, populator } from 'adminjs';
 import { useEnvironmentVariableToDisableActions, usePasswordsFeature } from '../../admin/features/index.js';
 import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
 import { menu } from '../../admin/index.js';
-import { THUMB, REFERENCE_VALUE, REFERENCE_VALUE_SHOW } from '../../admin/components.bundler.js';
+import { THUMB } from '../../admin/components.bundler.js';
 
 const getUserInfoById = async (id) => {
   const userInfo = await client.user.findFirst({
@@ -24,6 +24,7 @@ const ROLES = {
   1: '普通用户',
   2: '管理员',
   3: '超级管理员',
+  4: '开发人员',
 };
 
 const validateForm = async (request, context) => {
@@ -204,29 +205,48 @@ export const CreateUserRolesResource: ResourceFunction<{
           return response;
         },
       },
-      editUserRole: {
-        name: 'bulkEdit',
-        isVisible: true,
-        actionType: 'bulk',
-        icon: 'Trash2',
-        showInDrawer: true,
-        variant: 'danger',
+      managerRole: {
+        actionType: 'record',
+        component: false,
         isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(3),
-        handle: async (response, request, context) => {
-          const { record } = response;
+        handler: async (request, response, context) => {
+          const { record, resource, currentAdmin, h } = context;
           if (!record) {
             throw new NotFoundError(
               [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
               'Action#handler',
             );
           }
-          // const userId = record.params.user;
-          // await client.user.delete({
-          //   where: {
-          //     id: userId,
-          //   },
-          // });
-          return response;
+
+          if (request.method === 'get') {
+            return { record: record.toJSON(currentAdmin) };
+          }
+          const params = paramConverter.prepareParams(request.payload ?? {}, resource);
+
+          const newRecord = await record.update(params, context);
+          const [populatedRecord] = await populator([newRecord], context);
+
+          // eslint-disable-next-line no-param-reassign
+          context.record = populatedRecord;
+
+          if (record.isValid()) {
+            return {
+              redirectUrl: h.resourceUrl({ resourceId: resource._decorated?.id() || resource.id() }),
+              notice: {
+                message: 'successfullyUpdated',
+                type: 'success',
+              },
+              record: populatedRecord.toJSON(currentAdmin),
+            };
+          }
+          const baseMessage = populatedRecord.baseError?.message || 'thereWereValidationErrors';
+          return {
+            record: populatedRecord.toJSON(currentAdmin),
+            notice: {
+              message: baseMessage,
+              type: 'error',
+            },
+          };
         },
       },
     },

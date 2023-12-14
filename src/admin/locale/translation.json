@@ -20,7 +20,6 @@
     "confirmRemovalMany_plural": "确认删除 {{count}} 个记录",
     "logout": "登出",
     "login": "登陆",
-    "seeTheDocumentation": "参见: <1>文档</1>",
     "createFirstRecord": "创建第一个记录"
   },
   "labels": {
@@ -28,27 +27,12 @@
     "navigation": "导航",
     "pages": "页面",
     "selectedRecords": "已选中 ({{selected}})",
-    "filters": "筛选器",
-    "adminVersion": "Admin: {{version}}",
-    "appVersion": "App: {{version}}",
+    "filters": "筛选",
     "dashboard": "首页",
     "manager": "用户管理",
     "project": "项目列表"
   },
   "components": {
-    "LanguageSelector": {
-      "availableLanguages": {
-        "de": "德语",
-        "en": "英语",
-        "es": "西班牙语",
-        "it": "意大利语",
-        "ja": "日语",
-        "pl": "抛光",
-        "pt-BR": "葡萄牙语（巴西）",
-        "ua": "乌克兰",
-        "zh-CN": "中国人"
-      }
-    },
     "Login": {
       "welcomeHeader": "欢迎",
       "welcomeMessage": "到 AdminJS – 世界领先的开源自动生成管理面板, 可用于你的 Node.js 应用程序, 以将所有数据汇于一处管理",
@@ -57,7 +41,7 @@
         "password": "密码"
       },
       "loginButton": "登录",
-      "ssoLogin": "或使用单点登录",
+      "ssoLogin": "钉钉登入",
       "logout": "登出"
     }
   },
@@ -76,9 +60,10 @@
       "INACTIVE": "禁用"
     },
     "name": {
-      "USER": "普通用户",
+      "PUBLISHER": "普通用户",
+      "APPROVER": "审批者",
       "ADMIN": "管理员",
-      "SUPER_ADMIN": "超级管理员"
+      "DEVELOPER": "开发人员"
     },
     "USER": "普通用户",
     "ADMIN": "管理员",
@@ -224,25 +209,7 @@
     "confirmDelete": "你真的想移除此项吗?",
     "welcomeOnBoard_title": "欢迎使用!",
     "welcomeOnBoard_subtitle": "现在你是我们的一员了! 我们为你准备了一些小贴士，供您使用。",
-    "addingResources_title": "添加资源",
-    "addingResources_subtitle": "如何向侧边栏添加资源",
-    "customizeResources_title": "自定义资源",
-    "customizeResources_subtitle": "定义行为、添加属性等...",
-    "customizeActions_title": "自定义操作",
-    "customizeActions_subtitle": "编辑已有的操作或添加新的操作",
-    "writeOwnComponents_title": "编写组件",
-    "writeOwnComponents_subtitle": "如何修改 AdminJS 的外观",
-    "customDashboard_title": "自定义仪表板",
-    "customDashboard_subtitle": "如何修改此视图、并在侧边栏添加新页面",
-    "roleBasedAccess_title": "基于角色的访问控制",
-    "roleBasedAccess_subtitle": "在 AdminJS 中创建用户角色和权限",
-    "community_title": "加入 Slack 社群",
-    "community_subtitle": "与 AdminJS 的开发者以及其他 AdminJS 用户交流",
-    "foundBug_title": "发现 Bug? 需要改进?",
-    "foundBug_subtitle": "在 GitHub 仓库提交 issue",
-    "needMoreSolutions_title": "需要更多高级解决方案?",
-    "needMoreSolutions_subtitle": "我们已经准备好为您提供优美的 UX/UI 设计, 并量身定制基于 AdminJS 等的软件",
-    "invalidCredentials": "错误的电子邮箱或密码",
+    "invalidCredentials": "错误的用户名或密码",
     "pageNotFound_title": "找不到网页",
     "pageNotFound_subtitle": "页 <strong>“{{pageName}}“</strong> 不存在",
     "componentNotFound_title": "未指定组件",

@@ -4,6 +4,7 @@ import { MANY_TO_MANY_EDIT, MANY_TO_MANY_SHOW, MANY_TO_MANY_LIST } from '../../a
 import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
 import { menu } from '../../admin/index.js';
+import { AuthRoles, ROLE } from '../../admin/constants/authUsers.js';
 
 export const getUserRolesHook = async (request, context) => {
   const { method, payload } = request;
@@ -87,6 +88,41 @@ export const createUserRolesHook = async (response, request, context) => {
   return response;
 };
 
+export const userBeforeHook = async (request, context) => {
+  const { method, payload } = request;
+  const { record } = context;
+  if (!record) {
+    throw new NotFoundError(
+      [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
+      'Action#handler',
+    );
+  }
+  // if (method !== 'post' || !payload) {
+  //   return request;
+  // }
+  // const roles = flat.unflatten(payload)?.roles || [];
+  // if (roles && roles.length) {
+  //   const data = roles.map(({ id }) => {
+  //     return {
+  //       userId: record.id(),
+  //       roleId: Number(id),
+  //     };
+  //   });
+  //   await client.userRoles.deleteMany({
+  //     where: {
+  //       userId: record.id(),
+  //     },
+  //   });
+
+  //   await client.userRoles.createMany({
+  //     data,
+  //   });
+  // }
+  console.log(payload);
+
+  return request;
+};
+
 export const CreateUserResource: ResourceFunction<{
   model: typeof dmmf.modelMap.User;
   client: typeof client;
@@ -100,34 +136,33 @@ export const CreateUserResource: ResourceFunction<{
     navigation: menu.manager,
     properties: {
       id: {
-        isVisible: { list: true, show: false, edit: false, filter: false },
-        isId: true,
-        position: 1,
+        isVisible: false,
+      },
+      avatarUrl: {
+        isVisible: { list: false, show: true, edit: false, filter: false },
       },
       username: {
         isVisible: true,
-        position: 2,
         isSortable: true,
       },
       password: {
         isVisible: false,
       },
-      status: {
-        isVisible: false,
+      nick: {
+        isVisible: true,
+        isTitle: true,
+      },
+      mobile: {
+        isVisible: true,
+        isDisabled: true,
       },
       roles: {
-        reference: 'Role',
+        reference: 'role',
         isVisible: {
           list: true,
           show: true,
           filter: false,
           edit: true,
-        },
-        isArray: false,
-        components: {
-          show: MANY_TO_MANY_SHOW,
-          edit: MANY_TO_MANY_EDIT,
-          list: MANY_TO_MANY_LIST,
         },
       },
       unionId: {
@@ -136,18 +171,8 @@ export const CreateUserResource: ResourceFunction<{
       openId: {
         isVisible: false,
       },
-      nick: {
-        isVisible: { list: true, show: true, edit: false, filter: true },
-        isTitle: true,
-        position: 4,
-        isSortable: true,
-      },
-      avatarUrl: {
-        isVisible: { list: false, show: true, edit: false, filter: false },
-      },
-      mobile: {
-        isVisible: { list: true, show: true, edit: false, filter: true },
-        position: 5,
+      status: {
+        isVisible: false,
       },
       stateCode: {
         isVisible: false,
@@ -155,22 +180,32 @@ export const CreateUserResource: ResourceFunction<{
     },
     actions: {
       new: {
-        isAccessible: false,
-        isVisible: false,
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
+        // isVisible: false,
         after: [createUserRolesHook],
       },
       edit: {
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
+        // isVisible: false,
+        before: [userBeforeHook],
+      },
+      delete: {
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
+        // isVisible: false,
+      },
+      bulkDelete: {
         isAccessible: false,
-        isVisible: false,
-        before: [getUserRolesHook, postUserRolesHook],
+        // isVisible: false,
       },
       show: {
-        isAccessible: false,
-        isVisible: false,
-        before: [getUserRolesHook],
+        isAccessible: ({ currentAdmin }) =>
+          currentAdmin && (currentAdmin.roles.includes(ROLE.DEVELOPER) || currentAdmin.roles.includes(ROLE.ADMIN)),
+        // isVisible: false,
+        // before: [getUserRolesHook],
       },
       list: {
-        isAccessible: false,
+        isAccessible: ({ currentAdmin }) =>
+          currentAdmin && (currentAdmin.roles.includes(ROLE.DEVELOPER) || currentAdmin.roles.includes(ROLE.ADMIN)),
         after: async (response, request, context) => {
           response.records.forEach((record) => {
             record.params.password = '';

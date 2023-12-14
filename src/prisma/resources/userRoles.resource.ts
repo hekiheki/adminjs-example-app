@@ -114,6 +114,7 @@ export const CreateUserRolesResource: ResourceFunction<{
       role: {
         isVisible: { list: false, show: false, edit: true, filter: true },
         position: 4,
+        reference: 'role',
       },
       userRole: {
         isVisible: { list: true, show: true, edit: false, filter: false },
@@ -133,6 +134,11 @@ export const CreateUserRolesResource: ResourceFunction<{
       newPassword: {
         isRequired: true,
         position: 3,
+      },
+      nick: {
+        type: 'string',
+        isVisible: { list: true, show: true, edit: true, filter: false },
+        position: 6,
       },
       mobile: {
         type: 'string',

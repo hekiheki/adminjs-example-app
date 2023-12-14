@@ -1,10 +1,10 @@
 import { Roles } from '@prisma/client';
 
 export enum ROLE {
-  PUBLISHER,
-  APPROVER,
-  ADMIN,
-  DEVELOPER,
+  PUBLISHER = 1,
+  APPROVER = 2,
+  ADMIN = 3,
+  DEVELOPER = 4,
 }
 
 export type AuthUser = {
@@ -15,6 +15,7 @@ export type AuthUser = {
 export type AuthRole = {
   name: Roles;
   comment?: string;
+  title?: string;
 };
 
 export const AuthUsers: AuthUser[] = [
@@ -37,8 +38,12 @@ export const AuthUsers: AuthUser[] = [
 ];
 
 export const AuthRoles: AuthRole[] = [
-  { name: Roles.PUBLISHER, comment: 'Publisher, can access and manage only the projects created by the user.' },
-  { name: Roles.APPROVER, comment: 'Approver, can access and manager the projects.' },
-  { name: Roles.ADMIN, comment: 'Admin, can access and manager the users and projects.' },
-  { name: Roles.DEVELOPER, comment: 'Developer, can access and manager data created by the user.' },
+  {
+    name: Roles.PUBLISHER,
+    comment: 'Publisher, can access and manage only the projects created by the user.',
+    title: '普通用户',
+  },
+  { name: Roles.APPROVER, comment: 'Approver, can access and manager the projects.', title: '审批者' },
+  { name: Roles.ADMIN, comment: 'Admin, can access and manager the users and projects.', title: '管理员' },
+  { name: Roles.DEVELOPER, comment: 'Developer, can access and manager data created by the user.', title: '开发人员' },
 ];

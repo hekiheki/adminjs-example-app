@@ -12,7 +12,7 @@ export type LoggedInProps = {
 
 const LoggedIn: React.FC<LoggedInProps> = (props) => {
   const { session, paths } = props;
-  const { translateButton } = useTranslation();
+  const { translateButton, translateProperty } = useTranslation();
 
   const dropActions: CurrentUserNavProps['dropActions'] = [
     {
@@ -35,7 +35,7 @@ const LoggedIn: React.FC<LoggedInProps> = (props) => {
     <Box flexShrink={0} data-css="logged-in">
       <CurrentUserNav
         name={session.nick || session.username}
-        title={title}
+        title={translateProperty(title)}
         avatarUrl={session.avatarUrl}
         dropActions={dropActions}
       />

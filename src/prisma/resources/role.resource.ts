@@ -2,12 +2,7 @@ import { menu } from '../../admin/index.js';
 import { useEnvironmentVariableToDisableActions } from '../../admin/features/useEnvironmentVariableToDisableActions.js';
 import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
-
-const ROLES = {
-  1: '普通用户',
-  2: '管理员',
-  3: '超级管理员',
-};
+import { AuthRoles, ROLE } from '../../admin/constants/authUsers.js';
 
 export const CreateRoleResource: ResourceFunction<{
   model: typeof dmmf.modelMap.Role;
@@ -20,6 +15,7 @@ export const CreateRoleResource: ResourceFunction<{
   features: [useEnvironmentVariableToDisableActions()],
   options: {
     navigation: menu.manager,
+    id: 'role',
     properties: {
       id: {
         isVisible: { list: true, show: false, edit: false, filter: false },
@@ -54,20 +50,23 @@ export const CreateRoleResource: ResourceFunction<{
       },
       list: {
         showFilter: false,
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(3),
+        isVisible: false,
+        isAccessible: ({ currentAdmin }) =>
+          currentAdmin && (currentAdmin.roles.includes(ROLE.DEVELOPER) || currentAdmin.roles.includes(ROLE.ADMIN)),
       },
       show: {
         isVisible: false,
         after: async (response) => {
           const { record } = response;
-          response.record.title = ROLES[record.id];
+          record.title = AuthRoles.find((role) => role.name === record.title)?.title;
           return response;
         },
       },
       search: {
         after: async (response) => {
-          response.records.forEach((record) => {
-            record.title = ROLES[record.id];
+          response.records.map((record) => {
+            record.title = AuthRoles.find((role) => role.name === record.title)?.title;
+            return record;
           });
           return response;
         },

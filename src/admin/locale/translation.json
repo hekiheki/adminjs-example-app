@@ -65,20 +65,16 @@
       "ADMIN": "管理员",
       "DEVELOPER": "开发人员"
     },
-    "USER": "普通用户",
-    "ADMIN": "管理员",
-    "SUPER_ADMIN": "超级管理员",
-    "Draft": "草稿",
-    "Pending": "待审核",
-    "Approved": "已批准",
-    "ACTIVE": "启用",
-    "INACTIVE": "禁用",
     "department_1": {
       "file": ""
     },
     "department_2": {
       "file": ""
-    }
+    },
+    "PUBLISHER": "普通用户",
+    "APPROVER": "审批者",
+    "ADMIN": "管理员",
+    "DEVELOPER": "开发人员"
   },
   "resources": {
     "User": {
@@ -104,9 +100,9 @@
         "SUPER_ADMIN": "超级管理员"
       }
     },
-    "Role": {
+    "role": {
       "labels": {
-        "Role": "角色"
+        "role": "角色"
       },
       "properties": {
         "name": "名称",

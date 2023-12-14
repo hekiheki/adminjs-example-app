@@ -23,9 +23,9 @@ const run = async () => {
     await prisma.$connect();
 
     await prisma.$transaction(
-      AuthRoles.map((role) =>
+      AuthRoles.map(({ name, comment }) =>
         prisma.role.create({
-          data: role,
+          data: { name, comment },
         }),
       ),
     );

@@ -11,7 +11,7 @@ export const CreateProjectTagsResource: ResourceFunction<{
     model: dmmf.modelMap.ProjectTags,
     client,
   },
-  features: [useEnvironmentVariableToDisableActions()],
+  features: [],
   options: {
     navigation: menu.project,
     properties: {

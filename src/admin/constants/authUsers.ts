@@ -16,6 +16,7 @@ export type AuthRole = {
   name: Roles;
   comment?: string;
   title?: string;
+  id?: ROLE;
 };
 
 export const AuthUsers: AuthUser[] = [
@@ -42,8 +43,24 @@ export const AuthRoles: AuthRole[] = [
     name: Roles.PUBLISHER,
     comment: 'Publisher, can access and manage only the projects created by the user.',
     title: '普通用户',
+    id: ROLE.PUBLISHER,
   },
-  { name: Roles.APPROVER, comment: 'Approver, can access and manager the projects.', title: '审批者' },
-  { name: Roles.ADMIN, comment: 'Admin, can access and manager the users and projects.', title: '管理员' },
-  { name: Roles.DEVELOPER, comment: 'Developer, can access and manager data created by the user.', title: '开发人员' },
+  {
+    name: Roles.APPROVER,
+    comment: 'Approver, can access and manager the projects.',
+    title: '审批者',
+    id: ROLE.APPROVER,
+  },
+  {
+    name: Roles.ADMIN,
+    comment: 'Admin, can access and manager the users and projects.',
+    title: '管理员',
+    id: ROLE.ADMIN,
+  },
+  {
+    name: Roles.DEVELOPER,
+    comment: 'Developer, can access and manager data created by the user.',
+    title: '开发人员',
+    id: ROLE.DEVELOPER,
+  },
 ];

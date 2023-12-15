@@ -4,6 +4,7 @@ import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
 import { menu } from '../../admin/index.js';
 import { THUMB } from '../../admin/components.bundler.js';
+import { AuthRoles } from '../../admin/constants/authUsers.js';
 
 const getUserInfoById = async (id) => {
   const userInfo = await client.user.findFirst({
@@ -18,13 +19,6 @@ const getUserInfoById = async (id) => {
     },
   });
   return userInfo;
-};
-
-const ROLES = {
-  1: '普通用户',
-  2: '管理员',
-  3: '超级管理员',
-  4: '开发人员',
 };
 
 const validateForm = async (request, context) => {
@@ -90,9 +84,8 @@ export const CreateUserRolesResource: ResourceFunction<{
     model: dmmf.modelMap.UserRoles,
     client,
   },
-  features: [useEnvironmentVariableToDisableActions(), usePasswordsFeature()],
+  features: [usePasswordsFeature()],
   options: {
-    id: 'user',
     navigation: menu.manager,
     properties: {
       id: {
@@ -109,7 +102,8 @@ export const CreateUserRolesResource: ResourceFunction<{
       user: {
         isVisible: { list: true, show: true, edit: false, filter: true },
         position: 2,
-        isTitle: true,
+        // isTitle: true,
+        reference: 'user',
       },
       role: {
         isVisible: { list: false, show: false, edit: true, filter: true },
@@ -148,7 +142,7 @@ export const CreateUserRolesResource: ResourceFunction<{
     },
     actions: {
       list: {
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(3),
+        isAccessible: false,
         after: async (response, request, context) => {
           const { records } = response;
           await Promise.all(
@@ -157,7 +151,7 @@ export const CreateUserRolesResource: ResourceFunction<{
               const roleId = record.params.role;
               const userInfo = await getUserInfoById(userId);
               record.params.mobile = userInfo.mobile;
-              record.params.userRole = ROLES[roleId];
+              record.params.userRole = AuthRoles[roleId - 1].title;
               return record;
             }),
           );
@@ -165,11 +159,11 @@ export const CreateUserRolesResource: ResourceFunction<{
         },
       },
       new: {
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(3),
+        isAccessible: false,
         before: [validateForm],
       },
       show: {
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(3),
+        isAccessible: false,
         after: async (response, request, context) => {
           const { record } = response;
           if (!record) {
@@ -185,7 +179,7 @@ export const CreateUserRolesResource: ResourceFunction<{
           // record.params.username = userInfo.nick || userInfo.username;
           record.params.mobile = userInfo.mobile;
           record.params.avatarUrl = userInfo.avatarUrl;
-          record.params.userRole = ROLES[roleId];
+          record.params.userRole = AuthRoles[roleId - 1].title;
           return response;
         },
       },
@@ -193,7 +187,7 @@ export const CreateUserRolesResource: ResourceFunction<{
         isAccessible: false,
       },
       delete: {
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(3),
+        isAccessible: false,
         after: async (response, request, context) => {
           const { record } = response;
           if (!record) {
@@ -209,50 +203,6 @@ export const CreateUserRolesResource: ResourceFunction<{
             },
           });
           return response;
-        },
-      },
-      managerRole: {
-        actionType: 'record',
-        component: false,
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(3),
-        handler: async (request, response, context) => {
-          const { record, resource, currentAdmin, h } = context;
-          if (!record) {
-            throw new NotFoundError(
-              [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
-              'Action#handler',
-            );
-          }
-
-          if (request.method === 'get') {
-            return { record: record.toJSON(currentAdmin) };
-          }
-          const params = paramConverter.prepareParams(request.payload ?? {}, resource);
-
-          const newRecord = await record.update(params, context);
-          const [populatedRecord] = await populator([newRecord], context);
-
-          // eslint-disable-next-line no-param-reassign
-          context.record = populatedRecord;
-
-          if (record.isValid()) {
-            return {
-              redirectUrl: h.resourceUrl({ resourceId: resource._decorated?.id() || resource.id() }),
-              notice: {
-                message: 'successfullyUpdated',
-                type: 'success',
-              },
-              record: populatedRecord.toJSON(currentAdmin),
-            };
-          }
-          const baseMessage = populatedRecord.baseError?.message || 'thereWereValidationErrors';
-          return {
-            record: populatedRecord.toJSON(currentAdmin),
-            notice: {
-              message: baseMessage,
-              type: 'error',
-            },
-          };
         },
       },
     },

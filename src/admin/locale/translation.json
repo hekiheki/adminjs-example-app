@@ -125,10 +125,7 @@
         "encryptedPassword": "加密密码",
         "nick": "姓名",
         "mobile": "电话号码",
-        "avatarUrl": "头像",
-        "USER": "普通用户",
-        "ADMIN": "管理员",
-        "SUPER_ADMIN": "超级管理员"
+        "avatarUrl": "头像"
       }
     },
     "Pending": {

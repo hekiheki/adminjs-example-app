@@ -111,6 +111,7 @@ export const CreateProjectResource = (status = 'Pending') => {
             show: status === 'Approved',
             filter: status === 'Approved',
           },
+          reference: 'user',
           position: 5,
         },
         approvedBy: {
@@ -120,6 +121,7 @@ export const CreateProjectResource = (status = 'Pending') => {
             show: status === 'Approved',
             filter: status === 'Approved',
           },
+          reference: 'user',
           position: 6,
         },
         approvedAt: {
@@ -131,7 +133,6 @@ export const CreateProjectResource = (status = 'Pending') => {
           },
           position: 7,
         },
-        // ...fileProperties(),
         ...filePropertiesFor('department_1', { isArray: true }),
         ...filePropertiesFor('department_2', { isArray: true }),
       },

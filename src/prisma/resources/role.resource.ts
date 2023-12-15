@@ -12,7 +12,7 @@ export const CreateRoleResource: ResourceFunction<{
     model: dmmf.modelMap.Role,
     client,
   },
-  features: [useEnvironmentVariableToDisableActions()],
+  features: [],
   options: {
     navigation: menu.manager,
     id: 'role',

@@ -25,17 +25,17 @@ const LoggedIn: React.FC<LoggedInProps> = (props) => {
     },
   ];
 
-  const title = useMemo(() => {
-    if (session?.roles?.length) {
-      const roleId = session.roles[0];
-      return AuthRoles[roleId].name;
-    }
-  }, [session.roles]);
+  // const title = useMemo(() => {
+  //   if (session?.roles?.length) {
+  //     const roleId = session.roles[0];
+  //     return AuthRoles[roleId].name;
+  //   }
+  // }, [session.roles]);
   return (
     <Box flexShrink={0} data-css="logged-in">
       <CurrentUserNav
         name={session.nick || session.username}
-        title={translateProperty(title)}
+        title={session.title}
         avatarUrl={session.avatarUrl}
         dropActions={dropActions}
       />

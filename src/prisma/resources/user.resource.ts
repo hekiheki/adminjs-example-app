@@ -1,127 +1,17 @@
-import { NotFoundError, flat } from 'adminjs';
-import { useEnvironmentVariableToDisableActions, usePasswordsFeature } from '../../admin/features/index.js';
-import { MANY_TO_MANY_EDIT, MANY_TO_MANY_SHOW, MANY_TO_MANY_LIST } from '../../admin/components.bundler.js';
+import { flat, ActionQueryParameters, populator, Filter } from 'adminjs';
+import { usePasswordsFeature } from '../../admin/features/index.js';
+import { THUMB } from '../../admin/components.bundler.js';
 import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
 import { menu } from '../../admin/index.js';
-import { AuthRoles, ROLE } from '../../admin/constants/authUsers.js';
-
-export const getUserRolesHook = async (request, context) => {
-  const { method, payload } = request;
-  const { record, action } = context;
-  if (!record) {
-    throw new NotFoundError(
-      [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
-      'Action#handler',
-    );
-  }
-  if (method !== 'post' || !payload || action.name !== 'new') {
-    const userRoles = await client.userRoles.findMany({
-      where: {
-        userId: record.id(),
-      },
-      include: {
-        role: true,
-      },
-    });
-
-    record.params.roles = userRoles?.map(({ role }) => role) || [];
-  }
-  return request;
-};
-
-export const postUserRolesHook = async (request, context) => {
-  const { method, payload } = request;
-  const { record } = context;
-  if (!record) {
-    throw new NotFoundError(
-      [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
-      'Action#handler',
-    );
-  }
-  if (method !== 'post' || !payload) {
-    return request;
-  }
-  const roles = flat.unflatten(payload)?.roles || [];
-  if (roles && roles.length) {
-    const data = roles.map(({ id }) => {
-      return {
-        userId: record.id(),
-        roleId: Number(id),
-      };
-    });
-    await client.userRoles.deleteMany({
-      where: {
-        userId: record.id(),
-      },
-    });
-
-    await client.userRoles.createMany({
-      data,
-    });
-  }
-
-  return request;
-};
-
-export const createUserRolesHook = async (response, request, context) => {
-  const { method, payload } = request;
-  if (method !== 'post' || !payload) {
-    return request;
-  }
-  const userId = response.record?.params?.id;
-  if (context.record.isValid() && userId) {
-    const roles = flat.unflatten(payload)?.roles || [];
-    if (roles && roles.length) {
-      const data = roles.map(({ id }) => {
-        return {
-          userId,
-          roleId: Number(id),
-        };
-      });
-      await client.userRoles.createMany({
-        data,
-      });
-    }
-  }
-
-  return response;
-};
-
-export const userBeforeHook = async (request, context) => {
-  const { method, payload } = request;
-  const { record } = context;
-  if (!record) {
-    throw new NotFoundError(
-      [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
-      'Action#handler',
-    );
-  }
-  // if (method !== 'post' || !payload) {
-  //   return request;
-  // }
-  // const roles = flat.unflatten(payload)?.roles || [];
-  // if (roles && roles.length) {
-  //   const data = roles.map(({ id }) => {
-  //     return {
-  //       userId: record.id(),
-  //       roleId: Number(id),
-  //     };
-  //   });
-  //   await client.userRoles.deleteMany({
-  //     where: {
-  //       userId: record.id(),
-  //     },
-  //   });
-
-  //   await client.userRoles.createMany({
-  //     data,
-  //   });
-  // }
-  console.log(payload);
-
-  return request;
-};
+import { ROLE } from '../../admin/constants/authUsers.js';
+import {
+  validateUserForm,
+  getUserRoles,
+  saveUserRoles,
+  deleteUserRoles,
+  getUsersRoles,
+} from '../hooks/managerUserRolesHook.js';
 
 export const CreateUserResource: ResourceFunction<{
   model: typeof dmmf.modelMap.User;
@@ -131,39 +21,55 @@ export const CreateUserResource: ResourceFunction<{
     model: dmmf.modelMap.User,
     client,
   },
-  features: [useEnvironmentVariableToDisableActions(), usePasswordsFeature()],
+  features: [usePasswordsFeature()],
   options: {
     navigation: menu.manager,
+    id: 'user',
     properties: {
       id: {
         isVisible: false,
       },
       avatarUrl: {
         isVisible: { list: false, show: true, edit: false, filter: false },
+        components: {
+          show: THUMB,
+        },
+        position: 1,
       },
       username: {
         isVisible: true,
         isSortable: true,
+        position: 2,
       },
       password: {
         isVisible: false,
+        position: 3,
+      },
+      newPassword: {
+        isRequired: true,
+        position: 3,
       },
       nick: {
         isVisible: true,
         isTitle: true,
+        position: 4,
+        isRequired: true,
       },
       mobile: {
-        isVisible: true,
+        isVisible: { list: true, show: true, edit: false, filter: true },
         isDisabled: true,
+        position: 5,
       },
       roles: {
         reference: 'role',
         isVisible: {
           list: true,
           show: true,
-          filter: false,
+          filter: true,
           edit: true,
         },
+        position: 6,
+        isRequired: true,
       },
       unionId: {
         isVisible: false,
@@ -182,36 +88,62 @@ export const CreateUserResource: ResourceFunction<{
       new: {
         isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
         // isVisible: false,
-        after: [createUserRolesHook],
+        before: [validateUserForm],
+        after: [saveUserRoles],
       },
       edit: {
         isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
         // isVisible: false,
-        before: [userBeforeHook],
+        before: [validateUserForm],
+        after: [getUserRoles, saveUserRoles],
       },
       delete: {
         isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
         // isVisible: false,
+        before: [deleteUserRoles],
       },
       bulkDelete: {
         isAccessible: false,
-        // isVisible: false,
+        isVisible: false,
       },
       show: {
         isAccessible: ({ currentAdmin }) =>
           currentAdmin && (currentAdmin.roles.includes(ROLE.DEVELOPER) || currentAdmin.roles.includes(ROLE.ADMIN)),
         // isVisible: false,
-        // before: [getUserRolesHook],
+        after: [getUserRoles],
       },
       list: {
         isAccessible: ({ currentAdmin }) =>
           currentAdmin && (currentAdmin.roles.includes(ROLE.DEVELOPER) || currentAdmin.roles.includes(ROLE.ADMIN)),
-        after: async (response, request, context) => {
-          response.records.forEach((record) => {
-            record.params.password = '';
-          });
-          return response;
+        before: async (request, context) => {
+          const { query } = request;
+          const { sortBy, filters = {} } = flat.unflatten(query || {}) as ActionQueryParameters;
+          const { properties } = context.resource.decorate().toJSON(context.currentAdmin);
+          const keys = Object.keys(filters);
+          if (Object.keys(properties).indexOf(sortBy) === -1) {
+            delete query.sortBy;
+          }
+          for (let index = 0; index < keys.length; index += 1) {
+            const key = keys[index];
+            const isResourceProperty = Object.keys(properties).indexOf(key) >= 0;
+            const filterKey = `filters.${key}`;
+            if (key === 'roles') {
+              query[`search.${key}`] = Number(query[filterKey]) ? query[filterKey] : null;
+              delete query[filterKey];
+            }
+            if (!isResourceProperty) {
+              delete query[filterKey];
+            }
+          }
+          return request;
         },
+        after: [getUsersRoles],
+      },
+      newAction: {
+        type: 'resource',
+        showFilter: true,
+        showResourceActions: true,
+        // handle: async () => {},
       },
     },
   },

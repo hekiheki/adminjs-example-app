@@ -29,6 +29,12 @@ export const menu: Record<string, ResourceOptions['navigation']> = {
   },
 };
 
+export enum ProjectStatus {
+  Pending = 'Pending',
+  Approved = 'Approved',
+  Rejected = 'Rejected',
+}
+
 export const generateAdminJSConfig: () => AdminJSOptions = () => ({
   // version: { admin: false, app: '2.0.0' },
   rootPath: '/',
@@ -58,7 +64,7 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
     CreateUserResource(),
     CreateRoleResource(),
     CreateProjectResource(),
-    CreateProjectResource('Approved'),
+    CreateProjectResource(ProjectStatus.Approved),
     CreateProjectTagsResource(),
     CreateTagResource(),
     CreateLogResource(),

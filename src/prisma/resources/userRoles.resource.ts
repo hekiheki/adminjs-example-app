@@ -86,6 +86,7 @@ export const CreateUserRolesResource: ResourceFunction<{
   },
   features: [usePasswordsFeature()],
   options: {
+    id: 'userRoles',
     navigation: menu.manager,
     properties: {
       id: {

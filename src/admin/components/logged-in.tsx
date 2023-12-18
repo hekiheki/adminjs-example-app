@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { CurrentUserNav, Box, CurrentUserNavProps } from '@adminjs/design-system';
 import { useTranslation, CurrentAdmin } from 'adminjs';
-import { AuthRoles } from '../constants/authUsers.js';
 
 export type LoggedInProps = {
   session: CurrentAdmin;
@@ -12,7 +11,7 @@ export type LoggedInProps = {
 
 const LoggedIn: React.FC<LoggedInProps> = (props) => {
   const { session, paths } = props;
-  const { translateButton, translateProperty } = useTranslation();
+  const { translateButton } = useTranslation();
 
   const dropActions: CurrentUserNavProps['dropActions'] = [
     {
@@ -25,12 +24,6 @@ const LoggedIn: React.FC<LoggedInProps> = (props) => {
     },
   ];
 
-  // const title = useMemo(() => {
-  //   if (session?.roles?.length) {
-  //     const roleId = session.roles[0];
-  //     return AuthRoles[roleId].name;
-  //   }
-  // }, [session.roles]);
   return (
     <Box flexShrink={0} data-css="logged-in">
       <CurrentUserNav

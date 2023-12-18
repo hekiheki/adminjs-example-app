@@ -1,5 +1,5 @@
 import { NotFoundError, populator, paramConverter, ValidationError, flat } from 'adminjs';
-import { menu } from '../../admin/index.js';
+import { menu, ProjectStatus } from '../../admin/index.js';
 import { useUploadFeature } from '../../admin/features/index.js';
 import { MANY_TO_MANY_EDIT, MANY_TO_MANY_SHOW } from '../../admin/components.bundler.js';
 import { client, dmmf } from '../config.js';
@@ -43,7 +43,7 @@ const filePropertiesFor = (name, options = {}) => {
   );
 };
 
-export const CreateProjectResource = (status = 'Pending') => {
+export const CreateProjectResource = (status = ProjectStatus.Pending) => {
   return {
     resource: {
       model: dmmf.modelMap.Project,
@@ -51,7 +51,7 @@ export const CreateProjectResource = (status = 'Pending') => {
     },
     features: [useUploadFeature('department_1', true), useUploadFeature('department_2', true)],
     options: {
-      id: status,
+      id: status.toLocaleLowerCase(),
       navigation: menu.project,
       properties: {
         name: {
@@ -86,10 +86,10 @@ export const CreateProjectResource = (status = 'Pending') => {
         tags: {
           reference: 'Tag',
           isVisible: {
-            list: status === 'Approved',
-            show: status === 'Approved',
-            filter: status === 'Approved',
-            edit: status === 'Approved',
+            list: status === ProjectStatus.Approved,
+            show: status === ProjectStatus.Approved,
+            filter: status === ProjectStatus.Approved,
+            edit: status === ProjectStatus.Approved,
           },
           isArray: false,
           components: {
@@ -98,7 +98,7 @@ export const CreateProjectResource = (status = 'Pending') => {
           },
           custom: {
             includeId: 'role',
-            reference: 'UserRoles',
+            reference: 'userRoles',
             resourceId: 'userId',
             referenceId: 'roleId',
             default: 'USER',
@@ -106,20 +106,20 @@ export const CreateProjectResource = (status = 'Pending') => {
         },
         owner: {
           isVisible: {
-            list: status === 'Approved',
+            list: status === ProjectStatus.Approved,
             edit: false,
-            show: status === 'Approved',
-            filter: status === 'Approved',
+            show: status === ProjectStatus.Approved,
+            filter: status === ProjectStatus.Approved,
           },
           reference: 'user',
           position: 5,
         },
         approvedBy: {
           isVisible: {
-            list: status === 'Approved',
+            list: status === ProjectStatus.Approved,
             edit: false,
-            show: status === 'Approved',
-            filter: status === 'Approved',
+            show: status === ProjectStatus.Approved,
+            filter: status === ProjectStatus.Approved,
           },
           reference: 'user',
           position: 6,
@@ -128,8 +128,8 @@ export const CreateProjectResource = (status = 'Pending') => {
           isVisible: {
             list: false,
             edit: false,
-            show: status === 'Approved',
-            filter: status === 'Approved',
+            show: status === ProjectStatus.Approved,
+            filter: status === ProjectStatus.Approved,
           },
           position: 7,
         },
@@ -149,11 +149,11 @@ export const CreateProjectResource = (status = 'Pending') => {
         },
         new: {
           isAccessible: ({ currentAdmin }) => {
-            return currentAdmin && status === 'Pending';
+            return currentAdmin && status === ProjectStatus.Pending;
           },
           before: async (request, context) => {
             const { currentAdmin } = context;
-            request.payload.status = 'Pending';
+            request.payload.status = ProjectStatus.Pending;
             request.payload.owner = currentAdmin.id;
             return request;
           },
@@ -209,7 +209,9 @@ export const CreateProjectResource = (status = 'Pending') => {
           component: false,
           isAccessible: ({ currentAdmin }) => {
             return (
-              currentAdmin && (currentAdmin.roles.includes(2) || currentAdmin.roles.includes(3)) && status === 'Pending'
+              currentAdmin &&
+              (currentAdmin.roles.includes(2) || currentAdmin.roles.includes(3)) &&
+              status === ProjectStatus.Pending
             );
           },
           handler: async (request, response, context) => {
@@ -220,7 +222,7 @@ export const CreateProjectResource = (status = 'Pending') => {
                 'Action#handler',
               );
             }
-            request.payload.status = 'Approved';
+            request.payload.status = ProjectStatus.Approved;
             request.payload.approvedBy = currentAdmin.id;
             request.payload.approvedAt = new Date();
             const params = paramConverter.prepareParams(request.payload ?? {}, resource);

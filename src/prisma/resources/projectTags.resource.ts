@@ -22,7 +22,7 @@ export const CreateProjectTagsResource: ResourceFunction<{
         isVisible: true,
         isTitle: true,
         position: 1,
-        reference: 'Approved',
+        reference: 'approved',
       },
       tag: {
         isVisible: true,

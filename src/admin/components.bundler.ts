@@ -18,20 +18,19 @@ override('components/login', 'Login');
 override('components/top-bar', 'TopBar');
 override('components/sidebar-resource-section', 'SidebarResourceSection');
 override('components/list/property-header', 'PropertyHeader');
-// override('components/reference/edit', 'DefaultReferenceEditProperty');
-// override('components/reference/filter', 'DefaultReferenceFilterProperty');
+override('components/filter-drawer', 'FilterDrawer');
+override('components/reference/edit', 'DefaultReferenceEditProperty');
+override('components/reference/show', 'DefaultReferenceShowProperty');
+override('components/reference/list', 'DefaultReferenceListProperty');
+// override('components/password', 'DefaultPasswordEditProperty');
+// override('components/edit-action', 'DefaultEditAction');
 
 /**
  * Common components
  */
-export const DONT_TOUCH_THIS_ACTION = add('components/dont-touch-this-action', 'CustomAction');
-export const DETAILED_STATS = add('components/detailed-stats', 'DetailedStats');
-export const THUMB = add('components/thumb', 'Thumb');
-export const MANY_TO_MANY_EDIT = add('components/many-to-many/edit', 'ManyToManyEdit');
-export const MANY_TO_MANY_LIST = add('components/many-to-many/list', 'ManyToManyList');
-export const MANY_TO_MANY_SHOW = add('components/many-to-many/show', 'ManyToManyShow');
-// export const MANY_TO_MANY_FILTER = add('components/many-to-many/filter', 'ManyToManyFilter');
-// export const ReferenceFilter = add('components/reference/filter', 'ReferenceFilterProperty');
+export const Thumb = add('components/thumb', 'Thumb');
+// export const UserForm = add('components/edit-action', 'EditAction');
+export const ResetPasswordComponent = add('components/password-edit-component', 'ResetPasswordComponent');
 
 /**
  * Pages

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { FormGroup, SelectAsync } from '@adminjs/design-system';
-import { ApiClient, FilterPropertyProps, SelectRecord, PropertyLabel } from 'adminjs';
+import { FilterPropertyProps, SelectRecord, ApiClient } from 'adminjs';
+
+import PropertyLabel from '../label.js';
 
 type SelectOptions = Array<{ value: string | number; label: string }>;
 
 const Filter: React.FC<FilterPropertyProps> = (props) => {
-  // const { translateProperty } = useTranslation();
   const { property, filter, onChange } = props;
   const [options, setOptions] = useState<SelectOptions>([]);
 
@@ -32,7 +33,7 @@ const Filter: React.FC<FilterPropertyProps> = (props) => {
 
   return (
     <FormGroup>
-      <PropertyLabel property={property} filter />
+      <PropertyLabel property={property} />
       <SelectAsync
         variant="filter"
         value={typeof selected === 'undefined' ? '' : selected}
@@ -46,5 +47,4 @@ const Filter: React.FC<FilterPropertyProps> = (props) => {
   );
 };
 
-export { Filter };
 export default Filter;

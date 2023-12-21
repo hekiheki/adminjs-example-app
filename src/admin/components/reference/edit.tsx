@@ -1,6 +1,8 @@
-import React, { FC, useState, useEffect, useMemo, memo } from 'react';
+import React, { FC, useState, useEffect, useMemo } from 'react';
 import { FormGroup, FormMessage, SelectAsync } from '@adminjs/design-system';
-import { ApiClient, EditPropertyProps, SelectRecord, RecordJSON, PropertyLabel, flat, useTranslation } from 'adminjs';
+import { ApiClient, EditPropertyProps, SelectRecord, RecordJSON, flat, useTranslation } from 'adminjs';
+
+import PropertyLabel from '../label.js';
 
 type CombinedProps = EditPropertyProps;
 type SelectRecordEnhanced = SelectRecord & {
@@ -8,9 +10,10 @@ type SelectRecordEnhanced = SelectRecord & {
 };
 
 const Edit: FC<CombinedProps> = (props) => {
-  const { translateProperty } = useTranslation();
   const { onChange, property, record } = props;
   const { reference: resourceId } = property;
+  const { translateProperty } = useTranslation();
+  const api = new ApiClient();
 
   if (!resourceId) {
     throw new Error(`Cannot reference resource in property '${property.path}'`);
@@ -24,60 +27,53 @@ const Edit: FC<CombinedProps> = (props) => {
     }
   };
 
-  const loadOptions = async (inputValue: string): Promise<SelectRecordEnhanced[]> => {
-    const api = new ApiClient();
+  const error = record?.errors[property.path];
 
+  // const selectedId = useMemo(
+  //   () => flat.get(record?.params, property.path) as string | undefined,
+  //   [property.path, record?.params],
+  // );
+
+  const [loadedOptions, setLoadedOptions] = useState<SelectRecordEnhanced[]>([]);
+  const [selectedOption, setSelectedOption] = useState<SelectRecord>();
+  const [loadingRecord, setLoadingRecord] = useState(0);
+
+  const loadOptions = async (inputValue: string): Promise<SelectRecordEnhanced[]> => {
     const optionRecords = await api.searchRecords({
       resourceId,
       query: inputValue,
     });
-    return optionRecords.map((optionRecord: RecordJSON) => ({
+
+    const results = optionRecords.map((optionRecord: RecordJSON) => ({
       value: optionRecord.id,
-      label: translateProperty(optionRecord.title, resourceId),
+      label: translateProperty(optionRecord.title, property.resourceId),
       record: optionRecord,
     }));
-  };
-  const error = record?.errors[property.path];
 
-  const selectedId = useMemo(() => flat.get(record?.params, property.path) as string | undefined, [record]);
-  const [loadedRecord, setLoadedRecord] = useState<RecordJSON | undefined>();
-  const [loadingRecord, setLoadingRecord] = useState(0);
+    setLoadedOptions(results);
+
+    return results;
+  };
 
   useEffect(() => {
-    if (selectedId) {
+    const selectedId = flat.get(record?.params, property.path);
+    if (selectedId && loadedOptions.length && !loadingRecord) {
       setLoadingRecord((c) => c + 1);
-      const api = new ApiClient();
-      api
-        .recordAction({
-          actionName: 'show',
-          resourceId,
-          recordId: selectedId,
-        })
-        .then(({ data }: any) => {
-          setLoadedRecord(data.record);
-        })
-        .finally(() => {
-          setLoadingRecord((c) => c - 1);
-        });
+      const { value, label } = loadedOptions.find((option: SelectRecordEnhanced) => option.value === selectedId);
+      if (!value || !label) return;
+      setSelectedOption({
+        value,
+        label,
+      });
+      setLoadingRecord((c) => c - 1);
     }
-  }, [selectedId, resourceId]);
-
-  const selectedValue = loadedRecord;
-  const selectedOption =
-    selectedId && selectedValue
-      ? {
-          value: selectedValue.id,
-          label: translateProperty(selectedValue.title, resourceId),
-        }
-      : {
-          value: '',
-          label: '',
-        };
+  }, [resourceId, loadedOptions, loadingRecord, record?.params, property.path]);
 
   return (
     <FormGroup error={Boolean(error)}>
       <PropertyLabel property={property} />
       <SelectAsync
+        isMulti={property.isArray}
         cacheOptions
         value={selectedOption}
         defaultOptions
@@ -93,5 +89,4 @@ const Edit: FC<CombinedProps> = (props) => {
   );
 };
 
-export { Edit };
 export default Edit;

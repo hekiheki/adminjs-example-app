@@ -1,7 +1,6 @@
 import { NotFoundError, populator, paramConverter, ValidationError, flat } from 'adminjs';
 import { menu, ProjectStatus } from '../../admin/index.js';
 import { useUploadFeature } from '../../admin/features/index.js';
-import { MANY_TO_MANY_EDIT, MANY_TO_MANY_SHOW } from '../../admin/components.bundler.js';
 import { client, dmmf } from '../config.js';
 
 const fileProperties = (options = {}) =>
@@ -84,7 +83,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
           position: 4,
         },
         tags: {
-          reference: 'Tag',
+          reference: 'tag',
           isVisible: {
             list: status === ProjectStatus.Approved,
             show: status === ProjectStatus.Approved,
@@ -92,17 +91,6 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
             edit: status === ProjectStatus.Approved,
           },
           isArray: false,
-          components: {
-            show: MANY_TO_MANY_SHOW,
-            edit: MANY_TO_MANY_EDIT,
-          },
-          custom: {
-            includeId: 'role',
-            reference: 'userRoles',
-            resourceId: 'userId',
-            referenceId: 'roleId',
-            default: 'USER',
-          },
         },
         owner: {
           isVisible: {

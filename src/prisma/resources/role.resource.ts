@@ -1,8 +1,6 @@
 import { menu } from '../../admin/index.js';
-import { useEnvironmentVariableToDisableActions } from '../../admin/features/useEnvironmentVariableToDisableActions.js';
 import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
-import { AuthRoles, ROLE } from '../../admin/constants/authUsers.js';
 
 export const CreateRoleResource: ResourceFunction<{
   model: typeof dmmf.modelMap.Role;
@@ -18,17 +16,14 @@ export const CreateRoleResource: ResourceFunction<{
     id: 'role',
     properties: {
       id: {
-        isVisible: { list: true, show: false, edit: false, filter: false },
-        position: 1,
+        isVisible: true,
       },
       name: {
-        isVisible: { list: true, show: true, edit: true, filter: false },
+        isVisible: true,
         isTitle: true,
-        position: 2,
       },
       comment: {
         isVisible: false,
-        position: 3,
       },
     },
     actions: {
@@ -49,27 +44,15 @@ export const CreateRoleResource: ResourceFunction<{
         isVisible: false,
       },
       list: {
+        isAccessible: false,
         showFilter: false,
         isVisible: false,
-        isAccessible: ({ currentAdmin }) =>
-          currentAdmin && (currentAdmin.roles.includes(ROLE.DEVELOPER) || currentAdmin.roles.includes(ROLE.ADMIN)),
       },
       show: {
         isVisible: false,
-        after: async (response) => {
-          const { record } = response;
-          record.title = AuthRoles.find((role) => role.name === record.title)?.title;
-          return response;
-        },
       },
       search: {
-        after: async (response) => {
-          response.records.map((record) => {
-            record.title = AuthRoles.find((role) => role.name === record.title)?.title;
-            return record;
-          });
-          return response;
-        },
+        isVisible: false,
       },
     },
   },

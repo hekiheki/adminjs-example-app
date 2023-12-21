@@ -77,16 +77,14 @@
     "DEVELOPER": "开发人员"
   },
   "resources": {
-    "User": {
+    "user": {
       "labels": {
-        "User": "用户"
+        "user": "用户"
       },
       "properties": {
         "username": "用户名",
         "password": "密码",
-        "passwordConfirmation": "密码确认",
-        "newPassword": "密码",
-        "encryptedPassword": "加密密码",
+        "confirmPassword": "确认密码",
         "nick": "姓名",
         "roles": "用户角色",
         "status": "用户状态",
@@ -110,37 +108,19 @@
         "comment": "备注"
       }
     },
-    "user": {
+    "pending": {
       "labels": {
-        "user": "用户列表"
-      },
-      "properties": {
-        "user": "用户名",
-        "username": "用户名",
-        "role": "用户角色",
-        "userRole": "用户角色",
-        "password": "密码",
-        "passwordConfirmation": "密码确认",
-        "newPassword": "密码",
-        "encryptedPassword": "加密密码",
-        "nick": "姓名",
-        "mobile": "电话号码",
-        "avatarUrl": "头像"
+        "pending": "待审核"
       }
     },
-    "Pending": {
+    "approved": {
       "labels": {
-        "Pending": "待审核"
+        "approved": "已归档"
       }
     },
-    "Approved": {
+    "project": {
       "labels": {
-        "Approved": "已归档"
-      }
-    },
-    "Project": {
-      "labels": {
-        "Project": "项目"
+        "project": "项目"
       },
       "properties": {
         "name": "项目名称",
@@ -155,9 +135,9 @@
         "comment": "备注"
       }
     },
-    "Tag": {
+    "tag": {
       "labels": {
-        "Tag": "标签"
+        "tag": "标签"
       },
       "properties": {
         "name": "项目名称",
@@ -165,14 +145,14 @@
         "comment": "备注"
       }
     },
-    "ProjectTags": {
+    "projectTags": {
       "labels": {
-        "ProjectTags": "项目标签"
+        "projectTags": "项目标签"
       }
     },
-    "Log": {
+    "log": {
       "labels": {
-        "Log": "日志"
+        "log": "日志"
       }
     }
   },

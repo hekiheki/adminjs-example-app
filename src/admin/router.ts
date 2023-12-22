@@ -1,52 +1,10 @@
-import AdminJSExpress from '@adminjs/express';
 import AdminJS from 'adminjs';
-import { PrismaSessionStore } from '@quixo3/prisma-session-store';
-import argon2 from 'argon2';
 import { Router } from 'express';
-import { client } from '../prisma/config.js';
-import { componentLoader } from './components.bundler.js';
-import { DefaultAuthProvider } from './providers/auth-provider.js';
 
-export const authenticate = async ({ username, password }) => {
-  if (!username || !password) {
-    return null;
-  }
-  const user = await client.user.findFirst({
-    where: {
-      username,
-    },
-    include: {
-      roles: true,
-    },
-  });
-  const isPasswordVerified = await argon2.verify(user.password, password);
-  if (isPasswordVerified) {
-    return Promise.resolve({
-      id: user.id,
-      username: user.username,
-      roles: user.roles.map((role) => role.roleId),
-      mobile: user.mobile,
-      nick: user.nick,
-      avatarUrl: user.avatarUrl,
-      status: user.status,
-    });
-  }
-  return null;
-};
-
-export const authProvider = new DefaultAuthProvider({
-  componentLoader,
-  authenticate,
-});
+import { authProvider, buildAuthenticatedRouter, sessionStore } from './authtication/index.js';
 
 export const expressAuthenticatedRouter = (adminJs: AdminJS, router: Router | null = null) => {
-  const sessionStore = new PrismaSessionStore(client, {
-    checkPeriod: 2 * 60 * 1000, // 2 minutes
-    dbRecordIdIsSessionId: true,
-    // flushExpired: true,
-  });
-
-  return AdminJSExpress.buildAuthenticatedRouter(
+  return buildAuthenticatedRouter(
     adminJs,
     {
       cookieName: process.env.NAME,

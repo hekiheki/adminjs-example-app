@@ -45,6 +45,9 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
     styles: ['/custom.css'],
     scripts: process.env.NODE_ENV === 'production' ? ['/gtm.js'] : [],
   },
+  env: {
+    REDIRECT_URI: '/callback-for-dingtalk',
+  },
   branding: {
     companyName: process.env.COMPANY_NAME,
     favicon: '/favicon.ico',

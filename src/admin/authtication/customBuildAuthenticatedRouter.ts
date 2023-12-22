@@ -2,7 +2,7 @@ import AdminJS, { Router as AdminRouter } from 'adminjs';
 import express, { Router } from 'express';
 import formidableMiddleware from 'express-formidable';
 import session from 'express-session';
-
+import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import {
   withLogin,
   withLogout,
@@ -14,10 +14,10 @@ import {
   WrongArgumentError,
   AuthenticationOptions,
   FormidableOptions,
-  // withRefresh,
 } from '@adminjs/express';
 
 import { withAuthLogin } from './withAuthLogin.js';
+import { client } from '../../prisma/config.js';
 
 const MISSING_AUTH_CONFIG_ERROR = 'You must configure either "authenticate" method or assign an auth "provider"';
 const INVALID_AUTH_CONFIG_ERROR =
@@ -42,23 +42,14 @@ const INVALID_AUTH_CONFIG_ERROR =
  * logging out after every page refresh (if you use nodemon).
  * @static
  * @memberof module:@adminjs/express
- * @example
- * const ADMIN = {
- *   email: 'test@example.com',
- *   password: 'password',
- * }
- *
- * AdminJSExpress.buildAuthenticatedRouter(adminJs, {
- *   authenticate: async (email, password) => {
- *     if (ADMIN.password === password && ADMIN.email === email) {
- *       return ADMIN
- *     }
- *     return null
- *   },
- *   cookieName: 'adminjs',
- *   cookiePassword: 'somePassword',
- * }, [router])
  */
+
+export const sessionStore = new PrismaSessionStore(client, {
+  checkPeriod: 2 * 60 * 1000, // 2 minutes
+  dbRecordIdIsSessionId: true,
+  // flushExpired: true,
+});
+
 export const buildAuthenticatedRouter = (
   admin: AdminJS,
   auth: AuthenticationOptions,

@@ -1,8 +1,8 @@
 import AdminJS from 'adminjs';
 import { Router } from 'express';
 import fetch from 'node-fetch';
-import { client } from '../../prisma/config.js';
-import { Roles } from '@prisma/client';
+
+import { findUser, createUser } from '../../prisma/data/user.js';
 
 const requestUserToken = async (code) => {
   try {
@@ -46,11 +46,11 @@ const getUserInfo = async (accessToken) => {
 
 const saveUser = async (userInfo) => {
   const { unionId, nick, openId, avatarUrl, mobile, stateCode } = userInfo;
-  const user = await client.user.findFirst({
-    where: {
+  const user: any = await findUser(
+    {
       unionId,
     },
-    select: {
+    {
       id: true,
       username: true,
       roles: true,
@@ -59,42 +59,27 @@ const saveUser = async (userInfo) => {
       avatarUrl: true,
       status: true,
     },
-  });
+  );
   if (user) {
     return {
       ...user,
-      roles: user.roles.map((role) => role.roleId),
+      roles: user.roles?.map((role) => role.roleId) || [],
     };
   } else {
-    const newUser = await client.user.create({
-      data: {
-        unionId,
-        nick,
-        openId,
-        avatarUrl,
-        mobile,
-        stateCode,
-        username: mobile,
-      },
-    });
-
-    const defaultRole = await client.role.findFirst({
-      where: {
-        name: Roles.PUBLISHER,
-      },
-    });
-
-    await client.userRoles.create({
-      data: {
-        roleId: defaultRole.id,
-        userId: newUser.id,
-      },
+    const newUser = await createUser({
+      unionId,
+      nick,
+      openId,
+      avatarUrl,
+      mobile,
+      stateCode,
+      username: mobile,
     });
 
     return {
       id: newUser.id,
       username: newUser.mobile,
-      roles: [defaultRole.id],
+      roles: newUser.roles,
       mobile: newUser.mobile,
       nick: newUser.nick,
       avatarUrl: newUser.avatarUrl,
@@ -103,33 +88,20 @@ const saveUser = async (userInfo) => {
   }
 };
 
-const getLoginPath = (path, rootPath): string => {
-  // since we are inside already namespaced router we have to replace login and logout routes that
-  // they don't have rootUrl inside. So changing /admin/login to just /login.
-  // but there is a case where user gives / as a root url and /login becomes `login`. We have to
-  // fix it by adding / in front of the route
-  const normalizedLoginPath = path.replace(rootPath, '');
-
-  return normalizedLoginPath.startsWith('/') ? normalizedLoginPath : `/${normalizedLoginPath}`;
-};
-
 export const withAuthLogin = (router: Router, admin: AdminJS): void => {
-  const { rootPath, authLogin, authCallback, loginPath } = admin.options as any;
-  const loginPagePath = getLoginPath(loginPath, rootPath);
-  const authLoginPath = getLoginPath(authLogin, rootPath);
-  const redirectPath = getLoginPath(authCallback, rootPath);
+  const { rootPath } = admin.options as any;
 
-  router.get(authLoginPath, async (req, res) => {
+  router.get('/auth/login', async (req, res) => {
     const host = process.env.HOST;
     const clientId = process.env.DINGTALK_CLIENT_ID;
 
-    const redirect_uri = encodeURIComponent(`${host}${redirectPath}`);
+    const redirect_uri = encodeURIComponent(`${host}/callback-for-dingtalk`);
 
     const redirectUrl = `https://login.dingtalk.com/oauth2/auth?redirect_uri=${redirect_uri}&client_id=${clientId}&response_type=code&scope=openid&prompt=consent`;
     return res.redirect(redirectUrl);
   });
 
-  router.get(redirectPath, async (req, res, next) => {
+  router.get('/callback-for-dingtalk', async (req, res, next) => {
     const response: any = await requestUserToken(req.query.authCode);
     const data = await getUserInfo(response.accessToken);
     const adminUser = await saveUser(data);
@@ -147,7 +119,7 @@ export const withAuthLogin = (router: Router, admin: AdminJS): void => {
         }
       });
     } else {
-      return res.redirect(loginPagePath);
+      return res.redirect('/login');
     }
   });
 };

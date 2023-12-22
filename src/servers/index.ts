@@ -3,7 +3,6 @@ import express, { Express } from 'express';
 import cors from 'cors';
 import AdminJS from 'adminjs';
 import { fileURLToPath } from 'url';
-import router from './router.js';
 
 import { generateAdminJSConfig } from '../admin/index.js';
 import { expressAuthenticatedRouter } from '../admin/router.js';
@@ -17,7 +16,7 @@ const attachAdminJS = async (app: Express) => {
   if (process.env.NODE_ENV === 'production') await adminJS.initialize();
   else adminJS.watch();
 
-  const adminRouter = expressAuthenticatedRouter(adminJS, router);
+  const adminRouter = expressAuthenticatedRouter(adminJS);
 
   app.use(adminJS.options.rootPath, adminRouter);
 

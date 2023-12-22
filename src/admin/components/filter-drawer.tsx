@@ -42,11 +42,11 @@ const FilterDrawer: React.FC<FilterProps> = (props) => {
     setFilter({});
   };
 
-  useEffect(() => {
-    if (filters) {
-      setFilter(filters);
-    }
-  }, [filters]);
+  // useEffect(() => {
+  //   if (filters) {
+  //     setFilter(filters);
+  //   }
+  // }, [filters]);
 
   const handleChange = (propertyName: string | RecordJSON, value: any): void => {
     if ((propertyName as RecordJSON).params) {

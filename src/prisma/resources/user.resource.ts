@@ -221,8 +221,40 @@ export const CreateUserResource: ResourceFunction<{
         },
       },
       bulkDelete: {
-        isAccessible: false,
-        isVisible: false,
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
+        // isVisible: false,
+        handler: async (request, response, context) => {
+          const { records, resource, h } = context;
+
+          if (!records || !records.length) {
+            throw new NotFoundError('no records were selected.', 'Action#handler');
+          }
+          if (request.method === 'get') {
+            const recordsInJSON = records.map((record) => record.toJSON(context.currentAdmin));
+            return {
+              records: recordsInJSON,
+            };
+          }
+          if (request.method === 'post') {
+            await Promise.all(
+              records.map(async (record) => {
+                await deleteUserRoles(Number(record.id()));
+                return resource.delete(record.id(), context);
+              }),
+            );
+            return {
+              records: records.map((record) => record.toJSON(context.currentAdmin)),
+              notice: {
+                message: records.length > 1 ? 'successfullyBulkDeleted_plural' : 'successfullyBulkDeleted',
+                options: { count: records.length },
+                resourceId: resource.id(),
+                type: 'success',
+              },
+              redirectUrl: h.resourceUrl({ resourceId: resource._decorated?.id() || resource.id() }),
+            };
+          }
+          throw new Error('method should be either "post" or "get"');
+        },
       },
       show: {
         isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),

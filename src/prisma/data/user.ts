@@ -44,3 +44,81 @@ export const createUser = async (data) => {
     roles: [defaultRole.id],
   };
 };
+
+export const findUserRoles = async (userId: number) => {
+  const { role } = await client.userRoles.findFirst({
+    where: { userId },
+    include: {
+      role: true,
+    },
+  });
+  return role;
+};
+
+export const deleteUserRoles = async (userId: number) => {
+  await client.userRoles.deleteMany({
+    where: {
+      userId,
+    },
+  });
+};
+
+export const updateUserRoles = async (userId: number, roleId: number) => {
+  await deleteUserRoles(userId);
+
+  await client.userRoles.create({
+    data: {
+      userId,
+      roleId,
+    },
+  });
+};
+
+export const createUserRoles = async (userId: number, roleId: number) => {
+  await client.userRoles.create({
+    data: {
+      userId,
+      roleId,
+    },
+  });
+};
+
+const convertFilter = (filters: any) => {
+  return Object.entries(filters).reduce((where, [name, value]) => {
+    if (['username', 'nick', 'mobile'].includes(name)) {
+      where[name] = {
+        contains: value.toString(),
+      };
+    } else if (name === 'roles') {
+      where[name] = {
+        some: {
+          roleId: Number(value),
+        },
+      };
+    }
+    return where;
+  }, {});
+};
+export const findUsers = async (filters, params) => {
+  const { limit = 10, offset = 0, sort = {} } = params;
+  const { direction, sortBy } = sort as { direction: 'asc' | 'desc'; sortBy: string };
+  const results = await client.user.findMany({
+    where: convertFilter(filters),
+    skip: offset,
+    take: limit,
+    orderBy: {
+      [sortBy]: direction,
+    },
+    include: {
+      roles: true,
+    },
+  });
+  return results;
+};
+
+export const userCount = async (filters) => {
+  const result = await client.user.count({
+    where: convertFilter(filters),
+  });
+  return result;
+};

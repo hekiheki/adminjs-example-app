@@ -1,11 +1,20 @@
-import { flat, ActionQueryParameters } from 'adminjs';
+import { NotFoundError, paramConverter, populator, ValidationError, flat, ActionQueryParameters } from 'adminjs';
+
 import { usePasswordsFeature, useFormValidate } from '../../admin/features/index.js';
 import { Thumb } from '../../admin/components.bundler.js';
 import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
 import { menu } from '../../admin/index.js';
 import { ROLE } from '../../admin/constants/authUsers.js';
-import { getUserRoles, saveUserRoles, deleteUserRoles, getUsersRoles } from '../hooks/managerUserRolesHook.js';
+import {
+  findUserRoles,
+  updateUserRoles,
+  createUserRoles,
+  deleteUserRoles,
+  findUsers,
+  userCount,
+} from '../data/user.js';
+import sortSetter from '../utils/sort.js';
 
 export const CreateUserResource: ResourceFunction<{
   model: typeof dmmf.modelMap.User;
@@ -77,56 +86,217 @@ export const CreateUserResource: ResourceFunction<{
       stateCode: {
         isVisible: false,
       },
+      createdAt: {
+        isVisible: { show: true, edit: false, list: false, filter: false },
+      },
+      updatedAt: {
+        isVisible: { show: true, edit: false, list: false, filter: false },
+      },
     },
     actions: {
       new: {
         isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
-        after: [saveUserRoles],
+        handler: async (request, response, context) => {
+          const { resource, h, currentAdmin } = context;
+          if (request.method === 'post') {
+            const params = paramConverter.prepareParams(request.payload ?? {}, resource);
+
+            let record = await resource.build(params);
+
+            record = await record.create(context);
+            const [populatedRecord] = await populator([record], context);
+            await createUserRoles(Number(record.id()), Number(params.roles));
+
+            // eslint-disable-next-line no-param-reassign
+            context.record = populatedRecord;
+
+            if (record.isValid()) {
+              return {
+                redirectUrl: h.resourceUrl({ resourceId: resource._decorated?.id() || resource.id() }),
+                notice: {
+                  message: 'successfullyCreated',
+                  type: 'success',
+                },
+                record: record.toJSON(currentAdmin),
+              };
+            }
+            const baseMessage = populatedRecord.baseError?.message || 'thereWereValidationErrors';
+            return {
+              record: record.toJSON(currentAdmin),
+              notice: {
+                message: baseMessage,
+                type: 'error',
+              },
+            };
+          }
+          // TODO: add wrong implementation error
+          throw new Error('new action can be invoked only via `post` http method');
+        },
       },
       edit: {
         isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
-        after: [getUserRoles, saveUserRoles],
+        handler: async (request, response, context) => {
+          const { record, resource, currentAdmin, h } = context;
+          if (!record) {
+            throw new NotFoundError(
+              [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
+              'Action#handler',
+            );
+          }
+          if (request.method === 'get') {
+            const { id: roleId } = await findUserRoles(record.params.id);
+            record.params.roles = roleId;
+            record.params.password = null;
+            return { record: record.toJSON(currentAdmin) };
+          }
+
+          const params = paramConverter.prepareParams(request.payload ?? {}, resource);
+          const newRecord = await record.update(params, context);
+          const [populatedRecord] = await populator([newRecord], context);
+          await updateUserRoles(params.id, Number(params.roles));
+
+          // eslint-disable-next-line no-param-reassign
+          context.record = populatedRecord;
+
+          if (record.isValid()) {
+            return {
+              redirectUrl: h.resourceUrl({ resourceId: resource._decorated?.id() || resource.id() }),
+              notice: {
+                message: 'successfullyUpdated',
+                type: 'success',
+              },
+              record: populatedRecord.toJSON(currentAdmin),
+            };
+          }
+          const baseMessage = populatedRecord.baseError?.message || 'thereWereValidationErrors';
+          return {
+            record: populatedRecord.toJSON(currentAdmin),
+            notice: {
+              message: baseMessage,
+              type: 'error',
+            },
+          };
+        },
       },
       delete: {
         isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
-        before: [deleteUserRoles],
+        handler: async (request, _response, context) => {
+          const { record, resource, currentAdmin, h } = context;
+
+          if (!request.params.recordId || !record) {
+            throw new NotFoundError(['You have to pass "recordId" to Delete Action'].join('\n'), 'Action#handler');
+          }
+
+          if (request.method === 'get') {
+            return {
+              record: record.toJSON(context.currentAdmin),
+            };
+          }
+
+          try {
+            await deleteUserRoles(Number(record.id()));
+            await resource.delete(request.params.recordId, context);
+          } catch (error) {
+            if (error instanceof ValidationError) {
+              const baseMessage = error.baseError?.message || 'thereWereValidationErrors';
+              return {
+                record: record.toJSON(currentAdmin),
+                notice: {
+                  message: baseMessage,
+                  type: 'error',
+                },
+              };
+            }
+            throw error;
+          }
+
+          return {
+            record: record.toJSON(currentAdmin),
+            redirectUrl: h.resourceUrl({ resourceId: resource._decorated?.id() || resource.id() }),
+            notice: {
+              message: 'successfullyDeleted',
+              type: 'success',
+            },
+          };
+        },
       },
       bulkDelete: {
         isAccessible: false,
         isVisible: false,
       },
       show: {
-        isAccessible: ({ currentAdmin }) =>
-          currentAdmin && (currentAdmin.roles.includes(ROLE.DEVELOPER) || currentAdmin.roles.includes(ROLE.ADMIN)),
-        after: [getUserRoles],
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
+        handler: async (request, response, context) => {
+          const { record, currentAdmin, resource } = context;
+          if (!record) {
+            throw new NotFoundError(
+              [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
+              'Action#handler',
+            );
+          }
+          const { name } = await findUserRoles(record.params.id);
+          record.params.roles = name;
+          record.params.password = null;
+          return {
+            record: record.toJSON(currentAdmin),
+          };
+        },
       },
       list: {
         showFilter: true,
-        isAccessible: ({ currentAdmin }) =>
-          currentAdmin && (currentAdmin.roles.includes(ROLE.DEVELOPER) || currentAdmin.roles.includes(ROLE.ADMIN)),
-        // before: async (request, context) => {
-        //   const { query } = request;
-        //   const { sortBy, filters = {} } = flat.unflatten(query || {}) as ActionQueryParameters;
-        //   const { properties } = context.resource.decorate().toJSON(context.currentAdmin);
-        //   const keys = Object.keys(filters);
-        //   if (Object.keys(properties).indexOf(sortBy) === -1) {
-        //     delete query.sortBy;
-        //   }
-        //   for (let index = 0; index < keys.length; index += 1) {
-        //     const key = keys[index];
-        //     const isResourceProperty = Object.keys(properties).indexOf(key) >= 0;
-        //     const filterKey = `filters.${key}`;
-        //     if (key === 'roles') {
-        //       query[`search.${key}`] = Number(query[filterKey]) ? query[filterKey] : null;
-        //       delete query[filterKey];
-        //     }
-        //     if (!isResourceProperty) {
-        //       delete query[filterKey];
-        //     }
-        //   }
-        //   return request;
-        // },
-        after: [getUsersRoles],
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.ADMIN),
+        handler: async (request, response, context) => {
+          const { query } = request;
+          const { currentAdmin } = context;
+          const { sortBy, direction, filters = {} } = flat.unflatten(query || {}) as ActionQueryParameters;
+          const { resource, _admin } = context;
+          let { page } = flat.unflatten(query || {}) as ActionQueryParameters;
+
+          const perPage = _admin.options.settings?.defaultPerPage ?? 10;
+          page = Number(page) || 1;
+
+          const listProperties = resource.decorate().getListProperties();
+          const firstProperty = listProperties.find((p) => p.isSortable());
+          let sort;
+          if (firstProperty) {
+            sort = sortSetter({ sortBy, direction }, firstProperty.name(), resource.decorate().options);
+          }
+
+          const results = await findUsers(filters, {
+            limit: perPage,
+            offset: (page - 1) * perPage,
+            sort,
+          });
+
+          const records = await Promise.all(
+            results.map(async (item) => {
+              const params = paramConverter.prepareParams(item ?? {}, resource);
+              const { roles = [] } = params;
+              params.roles = roles.length ? roles.map((role) => role.roleId)[0] : null;
+              params.password = null;
+              const record = await resource.build(params);
+              const [populatedRecord] = await populator([record], context);
+              return populatedRecord;
+            }),
+          );
+
+          const populatedRecords = await populator(records, context);
+
+          // eslint-disable-next-line no-param-reassign
+          context.records = populatedRecords;
+
+          const total = await userCount(filters);
+          return {
+            meta: {
+              total,
+              perPage,
+              page,
+              direction: direction,
+              sortBy: sortBy,
+            },
+            records: populatedRecords.map((r) => r.toJSON(currentAdmin)),
+          };
+        },
       },
     },
   },

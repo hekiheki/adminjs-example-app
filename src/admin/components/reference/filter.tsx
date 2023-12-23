@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FormGroup, SelectAsync } from '@adminjs/design-system';
-import { FilterPropertyProps, SelectRecord, ApiClient } from 'adminjs';
+import { FilterPropertyProps, SelectRecord, ApiClient, useTranslation } from 'adminjs';
 
 import PropertyLabel from '../label.js';
 
@@ -8,7 +8,9 @@ type SelectOptions = Array<{ value: string | number; label: string }>;
 
 const Filter: React.FC<FilterPropertyProps> = (props) => {
   const { property, filter, onChange } = props;
+  const { reference: resourceId } = property;
   const [options, setOptions] = useState<SelectOptions>([]);
+  const { translateProperty } = useTranslation();
 
   const api = new ApiClient();
 
@@ -18,11 +20,11 @@ const Filter: React.FC<FilterPropertyProps> = (props) => {
 
   const loadOptions = async (inputValue: string): Promise<SelectOptions> => {
     const records = await api.searchRecords({
-      resourceId: property.reference as string,
+      resourceId,
       query: inputValue,
     });
 
-    const loadedOptions = records.map((r) => ({ value: r.id, label: r.title }));
+    const loadedOptions = records.map((r) => ({ value: r.id, label: translateProperty(r.title, resourceId) }));
     setOptions(loadedOptions);
 
     return loadedOptions;

@@ -19,7 +19,7 @@ const ReferenceValue: React.FC<Props> = (props) => {
   const refId = record.params[property.path];
   const populated = record.populated[property.path];
   const resourceId = property.reference;
-  const value = (populated && populated.title) || translateProperty(refId, resourceId);
+  const value = (populated && translateProperty(populated.title, resourceId)) || translateProperty(refId, resourceId);
 
   if (!property.reference) {
     throw new Error(`property: "${property.path}" does not have a reference`);

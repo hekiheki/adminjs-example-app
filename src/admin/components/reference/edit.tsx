@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useMemo } from 'react';
+import React, { FC, useState } from 'react';
 import { FormGroup, FormMessage, SelectAsync } from '@adminjs/design-system';
 import { ApiClient, EditPropertyProps, SelectRecord, RecordJSON, flat, useTranslation } from 'adminjs';
 
@@ -13,6 +13,7 @@ const Edit: FC<CombinedProps> = (props) => {
   const { onChange, property, record } = props;
   const { reference: resourceId } = property;
   const { translateProperty } = useTranslation();
+  const selectedId = flat.get(record?.params, property.path);
   const api = new ApiClient();
 
   if (!resourceId) {
@@ -20,25 +21,24 @@ const Edit: FC<CombinedProps> = (props) => {
   }
 
   const handleChange = (selected: SelectRecordEnhanced): void => {
+    console.log(selected);
     if (selected) {
-      onChange(property.path, selected.value, selected.record);
+      onChange(property.path, Number(selected.value), selected.record);
+      setSelectedOption(selected);
     } else {
       onChange(property.path, null);
+      setSelectedOption(null);
     }
   };
 
   const error = record?.errors[property.path];
 
-  // const selectedId = useMemo(
-  //   () => flat.get(record?.params, property.path) as string | undefined,
-  //   [property.path, record?.params],
-  // );
-
-  const [loadedOptions, setLoadedOptions] = useState<SelectRecordEnhanced[]>([]);
   const [selectedOption, setSelectedOption] = useState<SelectRecord>();
   const [loadingRecord, setLoadingRecord] = useState(0);
 
   const loadOptions = async (inputValue: string): Promise<SelectRecordEnhanced[]> => {
+    setLoadingRecord((c) => c + 1);
+
     const optionRecords = await api.searchRecords({
       resourceId,
       query: inputValue,
@@ -50,24 +50,13 @@ const Edit: FC<CombinedProps> = (props) => {
       record: optionRecord,
     }));
 
-    setLoadedOptions(results);
+    const selected = results.find((option: SelectRecordEnhanced) => option.value === selectedId);
+    setSelectedOption(selected);
+
+    setLoadingRecord((c) => c - 1);
 
     return results;
   };
-
-  useEffect(() => {
-    const selectedId = flat.get(record?.params, property.path);
-    if (selectedId && loadedOptions.length && !loadingRecord) {
-      setLoadingRecord((c) => c + 1);
-      const { value, label } = loadedOptions.find((option: SelectRecordEnhanced) => option.value === selectedId);
-      if (!value || !label) return;
-      setSelectedOption({
-        value,
-        label,
-      });
-      setLoadingRecord((c) => c - 1);
-    }
-  }, [resourceId, loadedOptions, loadingRecord, record?.params, property.path]);
 
   return (
     <FormGroup error={Boolean(error)}>

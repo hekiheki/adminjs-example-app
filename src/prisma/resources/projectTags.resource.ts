@@ -20,14 +20,13 @@ export const CreateProjectTagsResource: ResourceFunction<{
       },
       project: {
         isVisible: true,
-        isTitle: true,
         position: 1,
         reference: 'approved',
       },
       tag: {
         isVisible: true,
-        isTitle: true,
         position: 2,
+        reference: 'tag',
       },
     },
     actions: {

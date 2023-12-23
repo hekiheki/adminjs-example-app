@@ -24,7 +24,10 @@ const Filter: React.FC<FilterPropertyProps> = (props) => {
       query: inputValue,
     });
 
-    const loadedOptions = records.map((r) => ({ value: r.id, label: translateProperty(r.title, resourceId) }));
+    const loadedOptions = records.map((r) => ({
+      value: r.id,
+      label: resourceId === 'user' ? r.title : translateProperty(r.title, resourceId),
+    }));
     setOptions(loadedOptions);
 
     return loadedOptions;
@@ -35,7 +38,7 @@ const Filter: React.FC<FilterPropertyProps> = (props) => {
 
   return (
     <FormGroup>
-      <PropertyLabel property={property} />
+      <PropertyLabel property={property} filter={true} />
       <SelectAsync
         variant="filter"
         value={typeof selected === 'undefined' ? '' : selected}

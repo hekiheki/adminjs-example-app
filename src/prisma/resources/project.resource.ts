@@ -1,7 +1,10 @@
-import { NotFoundError, populator, paramConverter, ValidationError, flat } from 'adminjs';
+import { NotFoundError, populator, paramConverter, ValidationError, flat, ActionQueryParameters } from 'adminjs';
 import { menu, ProjectStatus } from '../../admin/index.js';
 import { useUploadFeature } from '../../admin/features/index.js';
 import { client, dmmf } from '../config.js';
+import { ROLE } from '../../admin/constants/authUsers.js';
+import { findProjects, projectCount } from '../data/project.js';
+import sortSetter from '../utils/sort.js';
 
 const fileProperties = (options = {}) =>
   ({
@@ -94,10 +97,10 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
         },
         owner: {
           isVisible: {
-            list: status === ProjectStatus.Approved,
+            list: true,
             edit: false,
-            show: status === ProjectStatus.Approved,
-            filter: status === ProjectStatus.Approved,
+            show: true,
+            filter: true,
           },
           reference: 'user',
           position: 5,
@@ -121,6 +124,22 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
           },
           position: 7,
         },
+        createdAt: {
+          isVisible: {
+            list: false,
+            edit: false,
+            show: true,
+            filter: status === ProjectStatus.Pending,
+          },
+        },
+        updatedAt: {
+          isVisible: {
+            list: false,
+            edit: false,
+            show: false,
+            filter: false,
+          },
+        },
         ...filePropertiesFor('department_1', { isArray: true }),
         ...filePropertiesFor('department_2', { isArray: true }),
       },
@@ -130,9 +149,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
           isVisible: false,
         },
         delete: {
-          isAccessible: ({ currentAdmin }) => {
-            return currentAdmin && (currentAdmin.roles.includes(2) || currentAdmin.roles.includes(3));
-          },
+          isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
           // isVisible: false,
         },
         new: {
@@ -172,35 +189,86 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
           },
         },
         list: {
-          before: async (request, context) => {
+          // before: async (request, context) => {
+          //   const { currentAdmin } = context;
+          //   const { query = {} } = request;
+          //   if (currentAdmin.roles.length === 1 && currentAdmin.roles.includes(1)) {
+          //     const newQuery = {
+          //       ...query,
+          //       ['filters.status']: status,
+          //       ['filters.owner']: currentAdmin?.id,
+          //     };
+          //     request.query = newQuery;
+          //   } else {
+          //     const newQuery = {
+          //       ...query,
+          //       ['filters.status']: status,
+          //     };
+          //     request.query = newQuery;
+          //   }
+          //   return request;
+          // },
+          handler: async (request, response, context) => {
+            const { query } = request;
             const { currentAdmin } = context;
-            const { query = {} } = request;
-            if (currentAdmin.roles.length === 1 && currentAdmin.roles.includes(1)) {
-              const newQuery = {
-                ...query,
-                ['filters.status']: status,
-                ['filters.owner']: currentAdmin?.id,
-              };
-              request.query = newQuery;
-            } else {
-              const newQuery = {
-                ...query,
-                ['filters.status']: status,
-              };
-              request.query = newQuery;
+            const { sortBy, direction, filters = {} } = flat.unflatten(query || {}) as ActionQueryParameters;
+            const { resource, _admin } = context;
+            let { page } = flat.unflatten(query || {}) as ActionQueryParameters;
+
+            const perPage = _admin.options.settings?.defaultPerPage ?? 10;
+            page = Number(page) || 1;
+
+            const listProperties = resource.decorate().getListProperties();
+            const firstProperty = listProperties.find((p) => p.isSortable());
+            let sort;
+            if (firstProperty) {
+              sort = sortSetter({ sortBy, direction }, firstProperty.name(), resource.decorate().options);
             }
-            return request;
+
+            const results = await findProjects(filters, {
+              limit: perPage,
+              offset: (page - 1) * perPage,
+              sort,
+              status,
+              currentAdmin,
+            });
+
+            const records = await Promise.all(
+              results.map(async (item) => {
+                const params = paramConverter.prepareParams(item ?? {}, resource);
+                const { tags = [], approvedById, ownerId } = params;
+                params.tags = tags.length ? tags.map((tag) => tag.tagId)[0] : null;
+                params.approvedBy = approvedById;
+                params.owner = ownerId;
+                const record = await resource.build(params);
+                const [populatedRecord] = await populator([record], context);
+                return populatedRecord;
+              }),
+            );
+
+            const populatedRecords = await populator(records, context);
+
+            // eslint-disable-next-line no-param-reassign
+            context.records = populatedRecords;
+
+            const total = await projectCount(filters, status, currentAdmin);
+            return {
+              meta: {
+                total,
+                perPage,
+                page,
+                direction: direction,
+                sortBy: sortBy,
+              },
+              records: populatedRecords.map((r) => r.toJSON(currentAdmin)),
+            };
           },
         },
         approved: {
           actionType: 'record',
           component: false,
           isAccessible: ({ currentAdmin }) => {
-            return (
-              currentAdmin &&
-              (currentAdmin.roles.includes(2) || currentAdmin.roles.includes(3)) &&
-              status === ProjectStatus.Pending
-            );
+            return currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER) && status === ProjectStatus.Pending;
           },
           handler: async (request, response, context) => {
             const { record, resource, currentAdmin, h } = context;

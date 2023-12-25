@@ -30,6 +30,7 @@ Then create postgres database and run migrations:
 ```bash
 $ npx prisma generate     # # this sets up Prisma Client in your node_modules
 $ yarn migration:up
+$ yarn seed # Add some default user with roles
 ```
 
 Note: If you see the error below when Prisma MySQL migration is run:

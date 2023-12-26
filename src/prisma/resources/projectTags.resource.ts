@@ -32,6 +32,27 @@ export const CreateProjectTagsResource: ResourceFunction<{
     actions: {
       list: {
         isAccessible: false,
+        isVisible: false,
+      },
+      new: {
+        isAccessible: false,
+        isVisible: false,
+      },
+      show: {
+        isAccessible: false,
+        isVisible: false,
+      },
+      edit: {
+        isAccessible: false,
+        isVisible: false,
+      },
+      delete: {
+        isAccessible: false,
+        isVisible: false,
+      },
+      bulkDelete: {
+        isAccessible: false,
+        isVisible: false,
       },
     },
   },

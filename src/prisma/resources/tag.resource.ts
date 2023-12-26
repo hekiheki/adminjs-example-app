@@ -1,6 +1,7 @@
 import { menu } from '../../admin/index.js';
 import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
+import { ROLE } from '../../admin/constants/authUsers.js';
 
 export const CreateTagResource: ResourceFunction<{
   model: typeof dmmf.modelMap.Tag;
@@ -16,24 +17,39 @@ export const CreateTagResource: ResourceFunction<{
     navigation: menu.project,
     properties: {
       id: {
-        isVisible: { list: true, show: false, edit: false, filter: false },
+        isVisible: false,
         position: 1,
       },
       name: {
-        isVisible: { list: true, show: true, edit: true, filter: false },
+        isVisible: true,
         isTitle: true,
         position: 2,
       },
       comment: {
-        isVisible: false,
+        isVisible: { list: true, show: true, edit: true, filter: false },
         position: 3,
       },
     },
     actions: {
       list: {
-        showFilter: false,
         isAccessible: ({ currentAdmin }) =>
-          currentAdmin && (currentAdmin.roles.includes(2) || currentAdmin.roles.includes(3)),
+          currentAdmin && (currentAdmin.roles.includes(ROLE.APPROVER) || currentAdmin.roles.includes(ROLE.ADMIN)),
+      },
+      new: {
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
+      },
+      show: {
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
+      },
+      edit: {
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
+      },
+      delete: {
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
+      },
+      bulkDelete: {
+        isAccessible: false,
+        isVisible: false,
       },
     },
   },

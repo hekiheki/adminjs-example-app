@@ -152,6 +152,10 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
           isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
           // isVisible: false,
         },
+        bulkDelete: {
+          isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
+          isVisible: false,
+        },
         new: {
           isAccessible: ({ currentAdmin }) => {
             return currentAdmin && status === ProjectStatus.Pending;

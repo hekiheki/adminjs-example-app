@@ -9,6 +9,8 @@ const convertFilter = (filters: any) => {
       };
     } else if (name === 'owner') {
       where.ownerId = Number(value);
+    } else if (name === 'approvedBy') {
+      where.approvedById = Number(value);
     } else if (name === 'tags') {
       where[name] = {
         some: {

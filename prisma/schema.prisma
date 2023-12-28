@@ -23,6 +23,7 @@ enum ProjectStatus {
   Draft
   Pending
   Approved
+  Rejected
 }
 
 model User {

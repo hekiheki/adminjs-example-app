@@ -25,6 +25,10 @@ const ReferenceValue: React.FC<Props> = (props) => {
     throw new Error(`property: "${property.path}" does not have a reference`);
   }
 
+  if (!value) {
+    return <></>;
+  }
+
   if (populated && populated.recordActions.find((a) => a.name === 'show')) {
     const href = h.recordActionUrl({
       resourceId,

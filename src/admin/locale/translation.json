@@ -20,7 +20,9 @@
     "confirmRemovalMany_plural": "确认删除 {{count}} 个记录",
     "logout": "登出",
     "login": "登陆",
-    "createFirstRecord": "创建第一个记录"
+    "createFirstRecord": "创建第一个记录",
+    "reject": "拒绝",
+    "approve": "审批通过"
   },
   "labels": {
     "confirm": "确认删除",

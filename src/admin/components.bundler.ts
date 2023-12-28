@@ -1,6 +1,6 @@
 import { ComponentLoader, OverridableComponent } from 'adminjs';
 import path from 'path';
-import * as url from 'url';
+import url from 'url';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 export const componentLoader = new ComponentLoader();
@@ -32,6 +32,7 @@ override('components/reference/filter', 'DefaultReferenceFilterProperty');
 export const Thumb = add('components/thumb', 'Thumb');
 // export const UserForm = add('components/edit-action', 'EditAction');
 export const ResetPasswordComponent = add('components/password-edit-component', 'ResetPasswordComponent');
+export const ApproveComponent = add('components/show', 'ApproveAction');
 // export const ReferenceEdit = add('components/password-edit-component', 'ReferenceEditProperty');
 // export const ReferenceShow = add('components/password-edit-component', 'ReferenceShowProperty');
 // export const ReferenceList = add('components/password-edit-component', 'ReferenceListProperty');

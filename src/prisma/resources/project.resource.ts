@@ -1,10 +1,10 @@
-import { NotFoundError, populator, paramConverter, ValidationError, flat, ActionQueryParameters } from 'adminjs';
+import { NotFoundError, populator, paramConverter, flat, ActionQueryParameters, ValidationError } from 'adminjs';
 import { menu, ProjectStatus } from '../../admin/index.js';
 import { ApproveComponent } from '../../admin/components.bundler.js';
 import { useUploadFeature } from '../../admin/features/index.js';
 import { client, dmmf } from '../config.js';
 import { ROLE } from '../../admin/constants/authUsers.js';
-import { findProjects, projectCount } from '../data/project.js';
+import { findProjects, projectCount, createProjectTags } from '../data/project.js';
 import sortSetter from '../utils/sort.js';
 
 const fileProperties = (options = {}) =>
@@ -145,13 +145,9 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
         ...filePropertiesFor('department_2', { isArray: true }),
       },
       actions: {
-        edit: {
-          isAccessible: false,
-          isVisible: false,
-        },
         delete: {
           isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
-          // isVisible: false,
+          isVisible: false,
         },
         bulkDelete: {
           isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
@@ -168,7 +164,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
             return request;
           },
           after: async (response, request, context) => {
-            const { record, resource, currentAdmin, h } = context;
+            const { record, currentAdmin } = context;
             if (!record) {
               throw new NotFoundError(
                 [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
@@ -176,7 +172,14 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
               );
             }
             const { department_1, department_2 } = flat.unflatten(record.params);
-            if (!department_1 || !department_2) {
+            const errors: string[] = [];
+            if (!department_1) {
+              errors.push('请上传部门1文件');
+            }
+            if (!department_2) {
+              errors.push('请上传部门2文件');
+            }
+            if (errors.length > 0) {
               await client.project.delete({
                 where: {
                   id: record.params.id,
@@ -185,7 +188,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
               return {
                 record: record.toJSON(currentAdmin),
                 notice: {
-                  message: '文件不能为空',
+                  message: errors.join('\n'),
                   type: 'error',
                 },
               };
@@ -194,25 +197,6 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
           },
         },
         list: {
-          // before: async (request, context) => {
-          //   const { currentAdmin } = context;
-          //   const { query = {} } = request;
-          //   if (currentAdmin.roles.length === 1 && currentAdmin.roles.includes(1)) {
-          //     const newQuery = {
-          //       ...query,
-          //       ['filters.status']: status,
-          //       ['filters.owner']: currentAdmin?.id,
-          //     };
-          //     request.query = newQuery;
-          //   } else {
-          //     const newQuery = {
-          //       ...query,
-          //       ['filters.status']: status,
-          //     };
-          //     request.query = newQuery;
-          //   }
-          //   return request;
-          // },
           handler: async (request, response, context) => {
             const { query } = request;
             const { currentAdmin } = context;
@@ -270,59 +254,62 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
           },
         },
         show: {
-          component: ApproveComponent,
+          isVisible: false,
         },
-        // approve: {
-        //   actionType: 'record',
-        //   component: ApproveComponent,
-        //   showFilter: true,
-        //   isAccessible: ({ currentAdmin }) => {
-        //     return currentAdmin && status === ProjectStatus.Pending;
-        //   },
-        //   handler: async (request, response, context) => {
-        //     const { record, resource, currentAdmin, h } = context;
-        //     if (!record) {
-        //       throw new NotFoundError(
-        //         [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
-        //         'Action#handler',
-        //       );
-        //     }
-        //     if (request.method === 'get') {
-        //       return {
-        //         record: record.toJSON(currentAdmin),
-        //       };
-        //     }
-        //     request.payload.status = ProjectStatus.Approved;
-        //     request.payload.approvedBy = currentAdmin.id;
-        //     request.payload.approvedAt = new Date();
-        //     const params = paramConverter.prepareParams(request.payload ?? {}, resource);
+        edit: {
+          name: 'approve',
+          actionType: 'record',
+          component: ApproveComponent,
+          isAccessible: ({ currentAdmin }) => {
+            return currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER) && status === ProjectStatus.Pending;
+          },
+          handler: async (request, response, context) => {
+            const { record, resource, currentAdmin, h } = context;
+            if (!record) {
+              throw new NotFoundError(
+                [`Record of given id ("${request.params.recordId}") could not be found`].join('\n'),
+                'Action#handler',
+              );
+            }
 
-        //     const newRecord = await record.update(params, context);
-        //     const [populatedRecord] = await populator([newRecord], context);
+            if (request.method === 'get') {
+              return {
+                record: record.toJSON(currentAdmin),
+              };
+            }
+            request.payload.approvedBy = currentAdmin.id;
+            request.payload.approvedAt = new Date();
+            const params = paramConverter.prepareParams(request.payload ?? {}, resource);
+            if (params.tags) {
+              await createProjectTags(params.id, Number(params.tags));
+            }
 
-        //     // eslint-disable-next-line no-param-reassign
-        //     context.record = populatedRecord;
+            const newRecord = await record.update(params, context);
+            const [populatedRecord] = await populator([newRecord], context);
 
-        //     if (record.isValid()) {
-        //       return {
-        //         redirectUrl: h.resourceUrl({ resourceId: resource._decorated?.id() || resource.id() }),
-        //         notice: {
-        //           message: 'successfullyUpdated',
-        //           type: 'success',
-        //         },
-        //         record: populatedRecord.toJSON(currentAdmin),
-        //       };
-        //     }
-        //     const baseMessage = populatedRecord.baseError?.message || 'thereWereValidationErrors';
-        //     return {
-        //       record: populatedRecord.toJSON(currentAdmin),
-        //       notice: {
-        //         message: baseMessage,
-        //         type: 'error',
-        //       },
-        //     };
-        //   },
-        // },
+            // eslint-disable-next-line no-param-reassign
+            context.record = populatedRecord;
+
+            if (record.isValid()) {
+              return {
+                redirectUrl: h.resourceUrl({ resourceId: resource._decorated?.id() || resource.id() }),
+                notice: {
+                  message: 'successfullyUpdated',
+                  type: 'success',
+                },
+                record: populatedRecord.toJSON(currentAdmin),
+              };
+            }
+            const baseMessage = populatedRecord.baseError?.message || 'thereWereValidationErrors';
+            return {
+              record: populatedRecord.toJSON(currentAdmin),
+              notice: {
+                message: baseMessage,
+                type: 'error',
+              },
+            };
+          },
+        },
       },
     },
   };

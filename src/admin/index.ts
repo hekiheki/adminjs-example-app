@@ -68,6 +68,7 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
     CreateRoleResource(),
     CreateProjectResource(),
     CreateProjectResource(ProjectStatus.Approved),
+    CreateProjectResource(ProjectStatus.Rejected),
     CreateProjectTagsResource(),
     CreateTagResource(),
     CreateLogResource(),

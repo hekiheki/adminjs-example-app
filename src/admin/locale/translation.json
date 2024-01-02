@@ -5,7 +5,8 @@
     "show": "显示",
     "delete": "删除",
     "bulkDelete": "删除所有",
-    "list": "列表"
+    "list": "列表",
+    "approve": "归档"
   },
   "buttons": {
     "save": "保存",
@@ -54,10 +55,15 @@
     "id": "ID",
     "createdAt": "创建于",
     "updatedAt": "更新于",
+    "approvedAt": "审批于",
+    "owner": "发布者",
+    "approvedBy": "审批者",
+    "tags": "标签",
     "status": {
       "Draft": "草稿",
       "Pending": "待审核",
       "Approved": "已批准",
+      "Rejected": "未通过",
       "ACTIVE": "启用",
       "INACTIVE": "禁用"
     },
@@ -66,12 +72,6 @@
       "APPROVER": "审批者",
       "ADMIN": "管理员",
       "DEVELOPER": "开发人员"
-    },
-    "department_1": {
-      "file": ""
-    },
-    "department_2": {
-      "file": ""
     },
     "PUBLISHER": "普通用户",
     "APPROVER": "审批者",
@@ -113,11 +113,34 @@
     "pending": {
       "labels": {
         "pending": "待审核"
+      },
+      "properties": {
+        "name": "项目名称",
+        "department_1": "部门1",
+        "department_2": "部门2",
+        "status": "状态"
+      }
+    },
+    "rejected": {
+      "labels": {
+        "rejected": "已拒绝"
+      },
+      "properties": {
+        "name": "项目名称",
+        "department_1": "部门1",
+        "department_2": "部门2",
+        "status": "状态"
       }
     },
     "approved": {
       "labels": {
         "approved": "已归档"
+      },
+      "properties": {
+        "name": "项目名称",
+        "department_1": "部门1",
+        "department_2": "部门2",
+        "status": "状态"
       }
     },
     "project": {

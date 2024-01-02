@@ -21,7 +21,6 @@ const Edit: FC<CombinedProps> = (props) => {
   }
 
   const handleChange = (selected: SelectRecordEnhanced): void => {
-    console.log(selected);
     if (selected) {
       onChange(property.path, Number(selected.value), selected.record);
       setSelectedOption(selected);

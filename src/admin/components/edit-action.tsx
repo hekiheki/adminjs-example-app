@@ -10,18 +10,6 @@ import {
   BasePropertyComponent,
   ActionHeader,
 } from 'adminjs';
-import argon2 from 'argon2';
-
-// import allowOverride from '../../hoc/allow-override.js'
-// import useRecord from '../../hooks/use-record/use-record.js'
-// import { useTranslation } from '../../hooks/use-translation.js'
-// import { RecordJSON } from '../../interfaces/index.js'
-// import { getActionElementCss } from '../../utils/index.js'
-// import ActionHeader from '../app/action-header/action-header.js'
-// import BasePropertyComponent from '../property-type/index.js'
-// import { ActionProps } from './action.props.js'
-// import { appendForceRefresh } from './utils/append-force-refresh.js'
-// import LayoutElementRenderer from './utils/layout-element-renderer.js'
 
 const EditAction: FC<ActionProps> = (props) => {
   const { record: initialRecord, resource, action } = props;
@@ -121,11 +109,3 @@ const EditAction: FC<ActionProps> = (props) => {
 };
 
 export default EditAction;
-
-// const OverridableEdit = allowOverride(Edit, 'DefaultEditAction')
-
-// export {
-//   OverridableEdit as default,
-//   OverridableEdit as Edit,
-//   Edit as OriginalEdit,
-// }

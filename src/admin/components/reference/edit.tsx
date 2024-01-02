@@ -61,7 +61,7 @@ const Edit: FC<CombinedProps> = (props) => {
     <FormGroup error={Boolean(error)}>
       <PropertyLabel property={property} />
       <SelectAsync
-        isMulti={property.isArray}
+        isMulti={property.custom.isMultiple}
         cacheOptions
         value={selectedOption}
         defaultOptions

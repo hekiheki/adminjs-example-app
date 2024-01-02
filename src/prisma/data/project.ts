@@ -47,7 +47,7 @@ export const findProjects = async (filters, params) => {
 export const projectCount = async (filters, status, currentAdmin) => {
   const where: any = convertFilter(filters);
   where.status = status;
-  if (status === ROLE.PUBLISHER) {
+  if (currentAdmin.roles[0] === ROLE.PUBLISHER) {
     where.ownerId = currentAdmin.id;
   }
   const result = await client.project.count({

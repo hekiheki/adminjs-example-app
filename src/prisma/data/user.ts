@@ -99,6 +99,7 @@ const convertFilter = (filters: any) => {
     return where;
   }, {});
 };
+
 export const findUsers = async (filters, params) => {
   const { limit = 10, offset = 0, sort = {} } = params;
   const { direction, sortBy } = sort as { direction: 'asc' | 'desc'; sortBy: string };

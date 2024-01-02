@@ -95,6 +95,9 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
             edit: false,
           },
           isArray: false,
+          custom: {
+            isMultiple: false,
+          },
         },
         owner: {
           isVisible: {
@@ -146,11 +149,11 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
       },
       actions: {
         delete: {
-          isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
+          isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles[0] >= ROLE.APPROVER,
           isVisible: false,
         },
         bulkDelete: {
-          isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
+          isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles[0] >= ROLE.APPROVER,
           isVisible: false,
         },
         new: {
@@ -257,11 +260,10 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
           isVisible: false,
         },
         edit: {
-          name: 'approve',
           actionType: 'record',
           component: ApproveComponent,
           isAccessible: ({ currentAdmin }) => {
-            return currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER) && status === ProjectStatus.Pending;
+            return currentAdmin && currentAdmin.roles[0] >= ROLE.APPROVER && status === ProjectStatus.Pending;
           },
           handler: async (request, response, context) => {
             const { record, resource, currentAdmin, h } = context;

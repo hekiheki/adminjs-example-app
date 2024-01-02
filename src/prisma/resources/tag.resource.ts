@@ -32,20 +32,19 @@ export const CreateTagResource: ResourceFunction<{
     },
     actions: {
       list: {
-        isAccessible: ({ currentAdmin }) =>
-          currentAdmin && (currentAdmin.roles.includes(ROLE.APPROVER) || currentAdmin.roles.includes(ROLE.ADMIN)),
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles[0] >= ROLE.APPROVER,
       },
       new: {
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles[0] >= ROLE.APPROVER,
       },
       show: {
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles[0] >= ROLE.APPROVER,
       },
       edit: {
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles[0] >= ROLE.APPROVER,
       },
       delete: {
-        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles.includes(ROLE.APPROVER),
+        isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles[0] >= ROLE.APPROVER,
       },
       bulkDelete: {
         isAccessible: false,

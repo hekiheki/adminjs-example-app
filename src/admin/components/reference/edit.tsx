@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { FormGroup, FormMessage, SelectAsync } from '@adminjs/design-system';
 import { ApiClient, EditPropertyProps, SelectRecord, RecordJSON, flat, useTranslation } from 'adminjs';
 
-import PropertyLabel from '../label.js';
+import PropertyLabel from '../propertyLabel.js';
 
 type CombinedProps = EditPropertyProps;
 type SelectRecordEnhanced = SelectRecord & {

@@ -7,5 +7,5 @@
     "*.spec.*",
     "test"
   ],
-  "exec": "node ./dist/index.js"
+  "exec": "NODE_ENV=development node ./dist/index.js"
 }

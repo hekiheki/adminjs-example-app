@@ -1,9 +1,10 @@
 import { NavBar, BoxProps, Box, Icon } from '@adminjs/design-system';
-import { styled, cssClass } from '@adminjs/design-system/styled-components';
+import { styled } from '@adminjs/design-system/styled-components';
 import { ReduxState } from 'adminjs';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import LoggedIn from './logged-in.js';
+
+import LoggedIn from './loggedIn.js';
 
 const NavBar = styled(Box)<BoxProps>`
   height: ${({ theme }) => theme.sizes.navbarHeight};
@@ -13,6 +14,7 @@ const NavBar = styled(Box)<BoxProps>`
   flex-direction: row;
   flex-shrink: 0;
   align-items: center;
+  justify-content: space-between;
 `;
 
 type Props = {
@@ -25,7 +27,7 @@ const TopBar: React.FC<Props> = (props) => {
   const paths = useSelector((state: ReduxState) => state.paths);
 
   return (
-    <NavBar data-css="topbar">
+    <NavBar data-css="top-bar">
       <Box
         py="lg"
         px={['default', 'lg']}

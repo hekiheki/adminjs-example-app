@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FormGroup, SelectAsync } from '@adminjs/design-system';
 import { FilterPropertyProps, SelectRecord, ApiClient, useTranslation } from 'adminjs';
 
-import PropertyLabel from '../label.js';
+import PropertyLabel from '../propertyLabel.js';
 
 type SelectOptions = Array<{ value: string | number; label: string }>;
 

@@ -4,7 +4,7 @@ import argon2 from 'argon2';
 import { AuthUsers, AuthRoles } from '../../admin/constants/authUsers.js';
 
 dotenv.config({
-  path: `${process.cwd()}/.env`,
+  path: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
 });
 
 const prisma = new PrismaClient();

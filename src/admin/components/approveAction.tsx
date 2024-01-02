@@ -3,8 +3,6 @@ import React, { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useRecord, useTranslation, RecordJSON, ActionProps, BasePropertyComponent, ActionHeader } from 'adminjs';
 
-// import { ProjectStatus } from '../index.js';
-
 const ApproveAction: FC<ActionProps> = (props) => {
   const { record: initialRecord, resource, action } = props;
 

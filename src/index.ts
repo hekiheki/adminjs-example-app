@@ -1,5 +1,3 @@
-import dotenv from 'dotenv';
+import dotenvFlow from 'dotenv-flow';
+dotenvFlow.config();
 import './servers/index.js';
-dotenv.config({
-  path: `${process.cwd()}/.env`,
-});

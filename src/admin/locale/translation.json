@@ -38,13 +38,13 @@
   "components": {
     "Login": {
       "welcomeHeader": "欢迎",
-      "welcomeMessage": "到 AdminJS – 世界领先的开源自动生成管理面板, 可用于你的 Node.js 应用程序, 以将所有数据汇于一处管理",
+      "welcomeMessage": "本应用是一个 Node.js 应用程序, 请登录使用",
       "properties": {
         "username": "用户名",
         "password": "密码"
       },
       "loginButton": "登录",
-      "ssoLogin": "钉钉登入",
+      "ssoLogin": "使用钉钉登录",
       "logout": "登出"
     }
   },

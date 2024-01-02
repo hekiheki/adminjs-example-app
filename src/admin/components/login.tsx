@@ -1,5 +1,4 @@
-import React from 'react';
-
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Box,
@@ -48,6 +47,7 @@ export const Login: React.FC = () => {
   const { translateComponent, translateMessage } = useTranslation();
   const branding = useSelector((state: ReduxState) => state.branding);
 
+  const query = new URLSearchParams(location.search);
   return (
     <Wrapper flex variant="grey" className="login__Wrapper">
       <Box bg="white" height="440px" flex boxShadow="login" width={[1, 2 / 3, 'auto']}>
@@ -87,27 +87,32 @@ export const Login: React.FC = () => {
               variant="danger"
             />
           )}
-          <FormGroup>
-            <Label required>{translateComponent('Login.properties.username')}</Label>
-            <Input name="username" placeholder={translateComponent('Login.properties.username')} />
-          </FormGroup>
-          <FormGroup>
-            <Label required>{translateComponent('Login.properties.password')}</Label>
-            <Input
-              type="password"
-              name="password"
-              placeholder={translateComponent('Login.properties.password')}
-              autoComplete="new-password"
-            />
-          </FormGroup>
-          <Text mt="xl" textAlign="center">
-            <Button variant="contained">{translateComponent('Login.loginButton')}</Button>
-          </Text>
           <Box mt="xxl">
             <Link href="/auth/login" ml="md">
               {translateComponent('Login.ssoLogin')}
             </Link>
           </Box>
+
+          {/* {query.get('admin') === 'login' && ( */}
+          <Box mt="xl">
+            <FormGroup>
+              <Label required>{translateComponent('Login.properties.username')}</Label>
+              <Input name="username" placeholder={translateComponent('Login.properties.username')} />
+            </FormGroup>
+            <FormGroup>
+              <Label required>{translateComponent('Login.properties.password')}</Label>
+              <Input
+                type="password"
+                name="password"
+                placeholder={translateComponent('Login.properties.password')}
+                autoComplete="new-password"
+              />
+            </FormGroup>
+            <Text mt="xl" textAlign="center">
+              <Button variant="contained">{translateComponent('Login.loginButton')}</Button>
+            </Text>
+          </Box>
+          {/* )} */}
         </Box>
       </Box>
     </Wrapper>

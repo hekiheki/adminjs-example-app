@@ -1,2 +1,2 @@
-export { authProvider } from './auth-provider.js';
+export { authProvider } from './authProvider.js';
 export { buildAuthenticatedRouter, sessionStore } from './customBuildAuthenticatedRouter.js';

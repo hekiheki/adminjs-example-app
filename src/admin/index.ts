@@ -51,6 +51,7 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
   branding: {
     companyName: process.env.COMPANY_NAME,
     favicon: '/favicon.ico',
+    // logo: '',
     theme: {
       colors: { primary100: '#4D70EB' },
     },

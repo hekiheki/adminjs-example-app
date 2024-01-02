@@ -1,7 +1,8 @@
 import React from 'react';
 import { ValueGroup } from '@adminjs/design-system';
 import { useTranslation, ShowPropertyProps } from 'adminjs';
-import ReferenceValue from './reference-value.js';
+
+import ReferenceValue from './referenceValue.js';
 
 const Show: React.FC<ShowPropertyProps> = (props) => {
   const { property, record } = props;

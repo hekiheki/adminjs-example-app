@@ -2,6 +2,7 @@ import { menu } from '../../admin/index.js';
 import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
 import { ROLE } from '../../admin/constants/authUsers.js';
+import { useLoggerFeature } from '../../admin/features/index.js';
 
 export const CreateTagResource: ResourceFunction<{
   model: typeof dmmf.modelMap.Tag;
@@ -11,7 +12,7 @@ export const CreateTagResource: ResourceFunction<{
     model: dmmf.modelMap.Tag,
     client,
   },
-  features: [],
+  features: [useLoggerFeature()],
   options: {
     id: 'tag',
     navigation: menu.project,

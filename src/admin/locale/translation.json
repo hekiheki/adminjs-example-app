@@ -178,6 +178,12 @@
     "log": {
       "labels": {
         "log": "日志"
+      },
+      "properties": {
+        "userId": "用户名",
+        "recordId": "记录 ID",
+        "resource": "资源",
+        "action": "操作"
       }
     }
   },

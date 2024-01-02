@@ -1,6 +1,6 @@
 import { NotFoundError, paramConverter, populator, ValidationError, flat, ActionQueryParameters } from 'adminjs';
 
-import { usePasswordsFeature, useFormValidate } from '../../admin/features/index.js';
+import { usePasswordsFeature, useFormValidate, useLoggerFeature } from '../../admin/features/index.js';
 import { Thumb } from '../../admin/components.bundler.js';
 import { ResourceFunction } from '../../admin/types/index.js';
 import { client, dmmf } from '../config.js';
@@ -24,7 +24,7 @@ export const CreateUserResource: ResourceFunction<{
     model: dmmf.modelMap.User,
     client,
   },
-  features: [useFormValidate(), usePasswordsFeature()],
+  features: [useFormValidate(), usePasswordsFeature(), useLoggerFeature()],
   options: {
     navigation: menu.manager,
     id: 'user',

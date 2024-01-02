@@ -1,7 +1,7 @@
 import { NotFoundError, populator, paramConverter, flat, ActionQueryParameters, ValidationError } from 'adminjs';
 import { menu, ProjectStatus } from '../../admin/index.js';
 import { ApproveComponent } from '../../admin/components.bundler.js';
-import { useUploadFeature } from '../../admin/features/index.js';
+import { useUploadFeature, useLoggerFeature } from '../../admin/features/index.js';
 import { client, dmmf } from '../config.js';
 import { ROLE } from '../../admin/constants/authUsers.js';
 import { findProjects, projectCount, createProjectTags } from '../data/project.js';
@@ -52,7 +52,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
       model: dmmf.modelMap.Project,
       client,
     },
-    features: [useUploadFeature('department_1', true), useUploadFeature('department_2', true)],
+    features: [useUploadFeature('department_1', true), useUploadFeature('department_2', true), useLoggerFeature()],
     options: {
       id: status.toLocaleLowerCase(),
       navigation: menu.project,

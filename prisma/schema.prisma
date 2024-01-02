@@ -74,8 +74,8 @@ model Session {
 model Project {
   id              Int           @id @default(autoincrement())
   name            String
-  department_1    Json?
-  department_2    Json?
+  department_1    Json?         @db.Json
+  department_2    Json?         @db.Json
   ownerId         Int
   approvedById    Int?
   approvedAt      DateTime?
@@ -116,5 +116,5 @@ model Log {
   difference  Json?    @db.Json
   action      String   @db.VarChar(128)
   resource    String   @db.VarChar(128)
-  userId      String   @db.VarChar(128)
+  userId      Int
 }

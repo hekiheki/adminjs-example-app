@@ -1,4 +1,4 @@
-import { NotFoundError, populator, paramConverter, flat, ActionQueryParameters, ValidationError } from 'adminjs';
+import { NotFoundError, populator, paramConverter, flat, ActionQueryParameters } from 'adminjs';
 import { menu, ProjectStatus } from '../../admin/index.js';
 import { ApproveComponent } from '../../admin/components.bundler.js';
 import { useUploadFeature, useLoggerFeature } from '../../admin/features/index.js';
@@ -96,19 +96,6 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
           },
           position: 5,
         },
-        tags: {
-          reference: 'tag',
-          isVisible: {
-            list: status === ProjectStatus.Approved,
-            show: status === ProjectStatus.Approved,
-            filter: status === ProjectStatus.Approved,
-            edit: false,
-          },
-          isArray: false,
-          custom: {
-            isMultiple: false,
-          },
-        },
         owner: {
           isVisible: {
             list: true,
@@ -145,6 +132,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
             show: true,
             filter: status === ProjectStatus.Pending,
           },
+          position: 9,
         },
         updatedAt: {
           isVisible: {
@@ -153,6 +141,29 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
             show: false,
             filter: false,
           },
+        },
+        tags: {
+          reference: 'tag',
+          isVisible: {
+            list: status === ProjectStatus.Approved,
+            show: true,
+            filter: status === ProjectStatus.Approved,
+            edit: false,
+          },
+          isArray: false,
+          custom: {
+            isMultiple: false,
+          },
+          position: 10,
+        },
+        comment: {
+          isVisible: {
+            list: true,
+            edit: true,
+            show: true,
+            filter: false,
+          },
+          position: 11,
         },
         ...filePropertiesFor('department_1', { isArray: true }),
         ...filePropertiesFor('department_2', { isArray: true }),

@@ -49,21 +49,21 @@ const ApproveAction: FC<ActionProps> = (props) => {
         {resource.showProperties.map((property) => (
           <BasePropertyComponent
             key={property.propertyPath}
-            where="show"
+            where={['comment', 'tags'].includes(property.propertyPath) ? 'edit' : 'show'}
             onChange={handleChange}
             property={property}
             resource={resource}
             record={record as RecordJSON}
           />
         ))}
-        <BasePropertyComponent
+        {/* <BasePropertyComponent
           key="tags"
           where="edit"
           onChange={handleChange}
           property={resource.properties.tags}
           resource={resource}
           record={record as RecordJSON}
-        />
+        /> */}
       </DrawerContent>
       <DrawerFooter data-css="drawer-footer">
         <Button

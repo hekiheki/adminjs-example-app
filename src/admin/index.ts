@@ -14,7 +14,6 @@ import {
 import './components.bundler.js';
 import { componentLoader, HOME } from './components.bundler.js';
 import { locale } from './locale/index.js';
-import { customTheme } from '../themes/index.js';
 
 AdminJS.registerAdapter({ Database: PrismaDatabase, Resource: PrismaResource });
 
@@ -43,7 +42,7 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
   locale,
   assets: {
     styles: ['/custom.css'],
-    scripts: process.env.NODE_ENV === 'production' ? ['/gtm.js'] : [],
+    // scripts: process.env.NODE_ENV === 'production' ? ['/gtm.js'] : [],
   },
   env: {
     REDIRECT_URI: '/callback-for-dingtalk',
@@ -61,7 +60,6 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
     component: HOME,
   },
   defaultTheme: 'light',
-  availableThemes: [light, dark, customTheme],
   componentLoader,
   resources: [
     CreateUserRolesResource(),

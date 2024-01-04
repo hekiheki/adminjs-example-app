@@ -10,3 +10,18 @@ a {
 a.adminjs_Header {
   display: block;
 }
+
+tr[data-css="pending-table-row"] td .adminjs_Label,
+tr[data-css="approved-table-row"] td .adminjs_Label,
+tr[data-css="rejected-table-row"] td .adminjs_Label {
+  display: none;
+}
+
+section[data-css="pending-edit-department_1.file"] .adminjs_Label,
+section[data-css="pending-edit-department_2.file"] .adminjs_Label,
+section[data-css="pending-edit-department_3.file"] .adminjs_Label,
+section[data-css="pending-show-department_1.file"] .adminjs_Label,
+section[data-css="pending-show-department_2.file"] .adminjs_Label,
+section[data-css="pending-show-department_3.file"] .adminjs_Label {
+  display: none;
+}

@@ -62,6 +62,7 @@
     "department_1": "部门1",
     "department_2": "部门2",
     "department_3": "部门3",
+    "comment": "备注",
     "status": {
       "Draft": "草稿",
       "Pending": "待审核",
@@ -170,12 +171,12 @@
         "projectTags": "项目标签"
       }
     },
-    "log": {
+    "Log": {
       "labels": {
-        "log": "日志"
+        "Log": "日志"
       },
       "properties": {
-        "userId": "用户名",
+        "userId": "用户 ID",
         "recordId": "记录 ID",
         "resource": "资源",
         "action": "操作"

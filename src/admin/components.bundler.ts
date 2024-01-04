@@ -29,6 +29,9 @@ override('components/reference/filter', 'DefaultReferenceFilterProperty');
 export const Thumb = add('components/thumb', 'Thumb');
 export const ResetPasswordComponent = add('components/resetPasswordComponent', 'ResetPasswordComponent');
 export const ApproveComponent = add('components/approveAction', 'ApproveAction');
+export const UploadEditComponent = add('components/uploadFile/uploadEditComponent', 'UploadEdit');
+export const UploadListComponent = add('components/uploadFile/uploadListComponent', 'UploadList');
+export const UploadShowComponent = add('components/uploadFile/uploadShowComponent', 'UploadShow');
 
 /**
  * Pages

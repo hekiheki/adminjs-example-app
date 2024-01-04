@@ -76,6 +76,7 @@ model Project {
   name            String
   department_1    Json?         @db.Json
   department_2    Json?         @db.Json
+  department_3    Json?         @db.Json
   ownerId         Int
   approvedById    Int?
   approvedAt      DateTime?

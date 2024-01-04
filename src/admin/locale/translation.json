@@ -59,6 +59,9 @@
     "owner": "发布者",
     "approvedBy": "审批者",
     "tags": "标签",
+    "department_1": "部门1",
+    "department_2": "部门2",
+    "department_3": "部门3",
     "status": {
       "Draft": "草稿",
       "Pending": "待审核",
@@ -116,8 +119,6 @@
       },
       "properties": {
         "name": "项目名称",
-        "department_1": "部门1",
-        "department_2": "部门2",
         "status": "状态"
       }
     },
@@ -127,8 +128,6 @@
       },
       "properties": {
         "name": "项目名称",
-        "department_1": "部门1",
-        "department_2": "部门2",
         "status": "状态"
       }
     },
@@ -138,8 +137,6 @@
       },
       "properties": {
         "name": "项目名称",
-        "department_1": "部门1",
-        "department_2": "部门2",
         "status": "状态"
       }
     },
@@ -150,12 +147,10 @@
       "properties": {
         "name": "项目名称",
         "status": "项目状态",
-        "department_1": "一级部门",
-        "department_2": "二级部门",
         "key": "Key",
         "bucket": "Bucket",
         "mime": "Mime",
-        "size": "Size",
+        "size": "文件大小",
         "tags": "标签",
         "comment": "备注"
       }

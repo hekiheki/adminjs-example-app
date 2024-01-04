@@ -52,7 +52,12 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
       model: dmmf.modelMap.Project,
       client,
     },
-    features: [useUploadFeature('department_1', true), useUploadFeature('department_2', true), useLoggerFeature()],
+    features: [
+      useUploadFeature('department_1', true),
+      useUploadFeature('department_2', true),
+      useUploadFeature('department_3', true),
+      useLoggerFeature(),
+    ],
     options: {
       id: status.toLocaleLowerCase(),
       navigation: menu.project,
@@ -73,6 +78,11 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
           isRequired: true,
           position: 3,
         },
+        department_3: {
+          type: 'mixed',
+          isRequired: true,
+          position: 4,
+        },
         id: {
           isVisible: false,
         },
@@ -84,7 +94,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
             show: true,
             filter: false,
           },
-          position: 4,
+          position: 5,
         },
         tags: {
           reference: 'tag',
@@ -107,7 +117,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
             filter: true,
           },
           reference: 'user',
-          position: 5,
+          position: 6,
         },
         approvedBy: {
           isVisible: {
@@ -117,7 +127,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
             filter: status === ProjectStatus.Approved,
           },
           reference: 'user',
-          position: 6,
+          position: 7,
         },
         approvedAt: {
           isVisible: {
@@ -126,7 +136,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
             show: status === ProjectStatus.Approved,
             filter: status === ProjectStatus.Approved,
           },
-          position: 7,
+          position: 8,
         },
         createdAt: {
           isVisible: {
@@ -146,6 +156,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
         },
         ...filePropertiesFor('department_1', { isArray: true }),
         ...filePropertiesFor('department_2', { isArray: true }),
+        ...filePropertiesFor('department_3', { isArray: true }),
       },
       actions: {
         delete: {
@@ -174,13 +185,16 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
                 'Action#handler',
               );
             }
-            const { department_1, department_2 } = flat.unflatten(record.params);
+            const { department_1, department_2, department_3 } = flat.unflatten(record.params);
             const errors: string[] = [];
             if (!department_1) {
               errors.push('请上传部门1文件');
             }
             if (!department_2) {
               errors.push('请上传部门2文件');
+            }
+            if (!department_3) {
+              errors.push('请上传部门3文件');
             }
             if (errors.length > 0) {
               await client.project.delete({

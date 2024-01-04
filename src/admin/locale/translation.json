@@ -32,7 +32,7 @@
     "selectedRecords": "已选中 ({{selected}})",
     "filters": "筛选",
     "dashboard": "首页",
-    "manager": "用户管理",
+    "manager": "管理",
     "project": "项目列表"
   },
   "components": {
@@ -121,6 +121,9 @@
       "properties": {
         "name": "项目名称",
         "status": "状态"
+      },
+      "actions": {
+        "edit": "审批"
       }
     },
     "rejected": {

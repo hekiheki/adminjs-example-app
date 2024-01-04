@@ -101,6 +101,10 @@ export const buildAuthenticatedRouter = (
   buildAssets({ admin, assets, routes, router });
 
   withProtectedRoutesHandler(router, admin);
+
+  router.get('/', async (req, res) => {
+    return res.redirect('/resources/pending');
+  });
   // withRefresh(router, admin, auth);
   buildRoutes({ admin, routes, router });
 

@@ -286,6 +286,7 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
         },
         edit: {
           actionType: 'record',
+          icon: 'Archive',
           component: ApproveComponent,
           isAccessible: ({ currentAdmin }) => {
             return currentAdmin && currentAdmin.roles[0] >= ROLE.APPROVER && status === ProjectStatus.Pending;

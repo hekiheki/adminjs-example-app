@@ -44,6 +44,8 @@ export const authenticate = async ({ username, password }) => {
     },
   );
 
+  if (!user) return null;
+
   const isPasswordVerified = await argon2.verify(user.password, password);
   if (isPasswordVerified) {
     delete user.password;

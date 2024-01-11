@@ -16,7 +16,8 @@ export const override = (url: string, componentName: OverridableComponent): stri
  */
 override('components/login', 'Login');
 override('components/topBar', 'TopBar');
-// override('components/sidebar-resource-section', 'SidebarResourceSection');
+override('components/sidebarBranding', 'SidebarBranding');
+override('components/sidebarFooter', 'SidebarFooter');
 override('components/list/propertyHeader', 'PropertyHeader');
 override('components/reference/edit', 'DefaultReferenceEditProperty');
 override('components/reference/show', 'DefaultReferenceShowProperty');

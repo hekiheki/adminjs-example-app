@@ -11,10 +11,10 @@ const NavBar = styled(Box)<BoxProps>`
   border-bottom: ${({ theme }) => theme.borders.default};
   background: ${({ theme }) => theme.colors.container};
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   flex-shrink: 0;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
 `;
 
 type Props = {
@@ -33,7 +33,7 @@ const TopBar: React.FC<Props> = (props) => {
         px={['default', 'lg']}
         onClick={toggleSidebar}
         display={['block', 'block', 'block', 'block', 'none']}
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: 'pointer', order: '1' }}
       >
         <Icon icon="Menu" size={24} />
       </Box>

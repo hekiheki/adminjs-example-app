@@ -7,7 +7,7 @@ export const expressAuthenticatedRouter = (adminJs: AdminJS, router: Router | nu
   return buildAuthenticatedRouter(
     adminJs,
     {
-      cookieName: process.env.NAME,
+      cookieName: process.env.NAME || 'DSJJ',
       cookiePassword: process.env.SESSION_SECRET,
       provider: authProvider,
       maxRetries: 5,
@@ -23,7 +23,7 @@ export const expressAuthenticatedRouter = (adminJs: AdminJS, router: Router | nu
         secure: process.env.NODE_ENV === 'production',
         maxAge: 30 * 24 * 60 * 60 * 1000,
       },
-      name: process.env.NAME,
+      name: process.env.NAME || 'DSJJ',
     },
   );
 };

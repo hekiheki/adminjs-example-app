@@ -1,21 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-  Box,
-  BoxProps,
-  H5,
-  H2,
-  Label,
-  Illustration,
-  Input,
-  FormGroup,
-  Button,
-  Text,
-  MessageBox,
-  Link,
-} from '@adminjs/design-system';
+import { Box, BoxProps, H4, Label, Input, FormGroup, Button, Text, MessageBox, Link } from '@adminjs/design-system';
 import { styled } from '@adminjs/design-system/styled-components';
 import { ReduxState, useTranslation } from 'adminjs';
+
+import Copyright from './copyright.js';
 
 const Wrapper = styled(Box)<BoxProps>`
   align-items: center;
@@ -26,20 +15,6 @@ const Wrapper = styled(Box)<BoxProps>`
 
 const StyledLogo = styled.img`
   max-width: 200px;
-  margin: ${({ theme }) => theme.space.md} 0;
-`;
-
-const IllustrationsWrapper = styled(Box)<BoxProps>`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  & svg [stroke='#3B3552'] {
-    stroke: rgba(255, 255, 255, 0.5);
-  }
-  & svg [fill='#3040D6'] {
-    fill: rgba(255, 255, 255, 1);
-  }
 `;
 
 export const Login: React.FC = () => {
@@ -47,39 +22,14 @@ export const Login: React.FC = () => {
   const { translateComponent, translateMessage } = useTranslation();
   const branding = useSelector((state: ReduxState) => state.branding);
 
-  const query = new URLSearchParams(location.search);
   return (
     <Wrapper flex variant="grey" className="login__Wrapper">
-      <Box bg="white" height="440px" flex boxShadow="login" width={[1, 2 / 3, 'auto']}>
-        <Box
-          bg="primary100"
-          color="white"
-          p="x3"
-          width="380px"
-          flexGrow={0}
-          display={['none', 'none', 'block']}
-          position="relative"
-        >
-          <H2 fontWeight="lighter">{translateComponent('Login.welcomeHeader')}</H2>
-          <Text fontWeight="lighter" mt="default">
-            {translateComponent('Login.welcomeMessage')}
-          </Text>
-          <IllustrationsWrapper p="xxl">
-            <Box display="inline" mr="default">
-              <Illustration variant="Planet" width={82} height={91} />
-            </Box>
-            <Box display="inline">
-              <Illustration variant="Astronaut" width={82} height={91} />
-            </Box>
-            <Box display="inline" position="relative" top="-20px">
-              <Illustration variant="FlagInCog" width={82} height={91} />
-            </Box>
-          </IllustrationsWrapper>
-        </Box>
+      <Box bg="white" flex boxShadow="login" width={[1, 2 / 3, 'auto']}>
         <Box as="form" action={action} method="POST" p="x3" flexGrow={1} width={['100%', '100%', '480px']}>
-          <H5 marginBottom="xxl">
+          <H4 marginBottom="xxl" flex alignItems="center">
             {branding.logo ? <StyledLogo src={branding.logo} alt={branding.companyName} /> : branding.companyName}
-          </H5>
+          </H4>
+
           {message && (
             <MessageBox
               my="lg"
@@ -87,13 +37,7 @@ export const Login: React.FC = () => {
               variant="danger"
             />
           )}
-          <Box mt="xxl">
-            <Link href="/auth/login" ml="md">
-              {translateComponent('Login.ssoLogin')}
-            </Link>
-          </Box>
 
-          {/* {query.get('admin') === 'login' && ( */}
           <Box mt="xl">
             <FormGroup>
               <Label required>{translateComponent('Login.properties.username')}</Label>
@@ -111,9 +55,16 @@ export const Login: React.FC = () => {
             <Text mt="xl" textAlign="center">
               <Button variant="contained">{translateComponent('Login.loginButton')}</Button>
             </Text>
+            <Text mt="xl" textAlign="center">
+              <Link href="/auth/login">
+                <StyledLogo src="/ding-ding.svg" alt={translateComponent('Login.ssoLogin')} />
+              </Link>
+            </Text>
           </Box>
-          {/* )} */}
         </Box>
+      </Box>
+      <Box mt="xxl">
+        <Copyright />
       </Box>
     </Wrapper>
   );

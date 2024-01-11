@@ -44,7 +44,8 @@
         "password": "密码"
       },
       "loginButton": "登录",
-      "ssoLogin": "使用钉钉登录",
+      "ssoLogin": "使用钉钉扫码登录",
+      "accountLogin": "已有账号密码? 使用账号密码登录",
       "logout": "登出"
     }
   },

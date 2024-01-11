@@ -1,6 +1,5 @@
 // Adapters
 import { Database as PrismaDatabase, Resource as PrismaResource } from '@adminjs/prisma';
-import { dark, light } from '@adminjs/themes';
 import AdminJS, { AdminJSOptions, ResourceOptions } from 'adminjs';
 import {
   CreateUserResource,
@@ -48,9 +47,9 @@ export const generateAdminJSConfig: () => AdminJSOptions = () => ({
     REDIRECT_URI: '/callback-for-dingtalk',
   },
   branding: {
-    companyName: process.env.COMPANY_NAME,
+    companyName: process.env.COMPANY_NAME || '宁波市大数据发展管理局',
     favicon: '/favicon.ico',
-    // logo: '',
+    logo: '',
     theme: {
       colors: { primary100: '#4D70EB' },
     },

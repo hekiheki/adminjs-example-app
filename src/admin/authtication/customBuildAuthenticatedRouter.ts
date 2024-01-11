@@ -15,6 +15,8 @@ import {
   AuthenticationOptions,
   FormidableOptions,
 } from '@adminjs/express';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 import { withAuthLogin } from './withAuthLogin.js';
 import { client } from '../../prisma/config.js';
@@ -44,6 +46,9 @@ const INVALID_AUTH_CONFIG_ERROR =
  * @memberof module:@adminjs/express
  */
 
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const ASSETS_ROOT = path.join(__dirname, '../../../public');
+
 export const sessionStore = new PrismaSessionStore(client, {
   checkPeriod: 2 * 60 * 1000, // 2 minutes
   dbRecordIdIsSessionId: true,
@@ -60,6 +65,18 @@ export const buildAuthenticatedRouter = (
   initializeAdmin(admin);
 
   const { routes, assets } = AdminRouter;
+
+  assets.push(
+    {
+      path: '/logo.png',
+      src: path.join(ASSETS_ROOT, 'logo.png'),
+    },
+    {
+      path: '/ding-ding.svg',
+      src: path.join(ASSETS_ROOT, 'ding-ding.svg'),
+    },
+  );
+
   const router = predefinedRouter || express.Router();
 
   if (!auth.authenticate && !auth.provider) {
@@ -98,6 +115,7 @@ export const buildAuthenticatedRouter = (
   withLogin(router, admin, auth);
   withAuthLogin(router, admin);
   withLogout(router, admin, auth);
+
   buildAssets({ admin, assets, routes, router });
 
   withProtectedRoutesHandler(router, admin);

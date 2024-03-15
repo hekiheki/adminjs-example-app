@@ -1,10 +1,10 @@
-import { NotFoundError, populator, paramConverter, flat, ActionQueryParameters } from 'adminjs';
+import { NotFoundError, populator, paramConverter, flat, ActionQueryParameters, ValidationError } from 'adminjs';
 import { menu, ProjectStatus } from '../../admin/index.js';
 import { ApproveComponent } from '../../admin/components.bundler.js';
 import { useUploadFeature, useLoggerFeature } from '../../admin/features/index.js';
 import { client, dmmf } from '../config.js';
 import { ROLE } from '../../admin/constants/authUsers.js';
-import { findProjects, projectCount, createProjectTags } from '../data/project.js';
+import { findProjects, projectCount, createProjectTags, deleteProjectTags } from '../data/project.js';
 import sortSetter from '../utils/sort.js';
 
 const fileProperties = (options = {}) =>
@@ -172,7 +172,46 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
       actions: {
         delete: {
           isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles[0] >= ROLE.APPROVER,
-          isVisible: false,
+          isVisible: true,
+          handler: async (request, _response, context) => {
+            const { record, resource, currentAdmin, h } = context;
+  
+            if (!request.params.recordId || !record) {
+              throw new NotFoundError(['You have to pass "recordId" to Delete Action'].join('\n'), 'Action#handler');
+            }
+  
+            if (request.method === 'get') {
+              return {
+                record: record.toJSON(context.currentAdmin),
+              };
+            }
+  
+            try {
+              await deleteProjectTags(Number(record.id()));
+              await resource.delete(request.params.recordId, context);
+            } catch (error) {
+              if (error instanceof ValidationError) {
+                const baseMessage = error.baseError?.message || 'thereWereValidationErrors';
+                return {
+                  record: record.toJSON(currentAdmin),
+                  notice: {
+                    message: baseMessage,
+                    type: 'error',
+                  },
+                };
+              }
+              throw error;
+            }
+  
+            return {
+              record: record.toJSON(currentAdmin),
+              redirectUrl: h.resourceUrl({ resourceId: resource._decorated?.id() || resource.id() }),
+              notice: {
+                message: 'successfullyDeleted',
+                type: 'success',
+              },
+            };
+          },
         },
         bulkDelete: {
           isAccessible: ({ currentAdmin }) => currentAdmin && currentAdmin.roles[0] >= ROLE.APPROVER,

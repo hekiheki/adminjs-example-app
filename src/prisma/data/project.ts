@@ -64,3 +64,11 @@ export const createProjectTags = async (projectId, tagId) => {
     },
   });
 };
+
+export const deleteProjectTags = async (projectId: number) => {
+  await client.projectTags.deleteMany({
+    where: {
+      projectId,
+    },
+  });
+};

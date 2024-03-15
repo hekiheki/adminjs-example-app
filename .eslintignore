@@ -1,0 +1,4 @@
+dist/
+public/
+prisma/
+node_modules/

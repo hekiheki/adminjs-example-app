@@ -70,17 +70,17 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
         },
         department_1: {
           type: 'mixed',
-          isRequired: true,
+          isRequired: false,
           position: 2,
         },
         department_2: {
           type: 'mixed',
-          isRequired: true,
+          isRequired: false,
           position: 3,
         },
         department_3: {
           type: 'mixed',
-          isRequired: true,
+          isRequired: false,
           position: 4,
         },
         id: {
@@ -145,10 +145,10 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
         tags: {
           reference: 'tag',
           isVisible: {
-            list: status === ProjectStatus.Approved,
+            list: true,
             show: true,
-            filter: status === ProjectStatus.Approved,
-            edit: false,
+            filter: true,
+            edit: true,
           },
           isArray: false,
           custom: {
@@ -235,31 +235,12 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
                 'Action#handler',
               );
             }
-            const { department_1, department_2, department_3 } = flat.unflatten(record.params);
-            const errors: string[] = [];
-            if (!department_1) {
-              errors.push('请上传部门1文件');
+
+            const { tags } = record.params;
+            if (tags) {
+              await createProjectTags(record.id(), Number(tags));
             }
-            if (!department_2) {
-              errors.push('请上传部门2文件');
-            }
-            if (!department_3) {
-              errors.push('请上传部门3文件');
-            }
-            if (errors.length > 0) {
-              await client.project.delete({
-                where: {
-                  id: record.params.id,
-                },
-              });
-              return {
-                record: record.toJSON(currentAdmin),
-                notice: {
-                  message: errors.join('\n'),
-                  type: 'error',
-                },
-              };
-            }
+
             return response;
           },
         },
@@ -346,6 +327,18 @@ export const CreateProjectResource = (status = ProjectStatus.Pending) => {
             }
             request.payload.approvedBy = currentAdmin.id;
             request.payload.approvedAt = new Date();
+
+            const { department_1, department_2, department_3 } = request.payload;
+            if (!department_1) {
+              request.payload.department_1 = undefined;
+            }
+            if (!department_2) {
+              request.payload.department_2 = undefined;
+            }
+            if (!department_3) {
+              request.payload.department_3 = undefined;
+            }
+
             const params = paramConverter.prepareParams(request.payload ?? {}, resource);
             if (params.tags) {
               await createProjectTags(params.id, Number(params.tags));
